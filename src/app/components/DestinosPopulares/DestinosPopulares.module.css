@@ -1,0 +1,45 @@
+.destinations {
+	position: relative;
+	z-index: 5;
+	background: rgba(0, 0, 0, 0.55); /* preto transparente */
+	padding: 50px 30px;
+	text-align: center;
+}
+
+.destinations h3 {
+	font-size: 2rem;
+	margin-bottom: 30px;
+	font-weight: bold;
+	color: #fff;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 20px;
+}
+
+.card {
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+	transition: 0.3s;
+}
+
+.card:hover {
+	transform: scale(1.05);
+}
+
+.card img {
+	width: 100%;
+	height: 180px;
+	object-fit: cover;
+}
+
+.cardTitle {
+	background: black;
+	color: white;
+	padding: 10px;
+	font-weight: bold;
+	text-align: center;
+}
