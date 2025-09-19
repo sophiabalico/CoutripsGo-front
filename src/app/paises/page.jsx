@@ -9,7 +9,7 @@ export default function PaisesPage() {
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedContinent, setSelectedContinent] = useState("all");
-  const [sortOption, setSortOption] = useState("name");
+  const [sortOption, setSortOption] = useState("original");
 
   // Função para filtrar e ordenar países
   const filterAndSortCountries = (countries, query, continent, sort) => {
@@ -73,8 +73,9 @@ export default function PaisesPage() {
           const aCont = a.continent || a.region || a.subregion || "";
           const bCont = b.continent || b.region || b.subregion || "";
           return aCont.localeCompare(bCont);
+        case "original":
         default:
-          return 0;
+          return 0; // Mantém a ordem original
       }
     });
 
@@ -195,6 +196,7 @@ export default function PaisesPage() {
                 onChange={(e) => setSortOption(e.target.value)}
                 className={styles.select}
               >
+                <option value="original">Ordem Original</option>
                 <option value="name">Nome (A-Z)</option>
                 <option value="name-desc">Nome (Z-A)</option>
                 <option value="continent">Por Continente</option>
@@ -218,7 +220,7 @@ export default function PaisesPage() {
             onClick={() => {
               setSearchQuery("");
               setSelectedContinent("all");
-              setSortOption("name");
+              setSortOption("original");
             }}
             className={styles.clearFiltersBtn}
           >

@@ -36,7 +36,7 @@
   justify-content: flex-start;
   padding: 40px 20px;
   text-align: center;
-  background-image: url("/imagens/fundo-de-tela.png");
+  background-image: url("/image/fundo-de-tela.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -291,7 +291,11 @@
 
 .card:hover {
   transform: translateY(-8px) scale(1.04);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+}
+
+.card:active {
+  transform: translateY(-4px) scale(1.02);
 }
 
 .card img {
@@ -326,11 +330,6 @@
 }
 
 .countryName {
-  position: absolute;
-  left: 50%;
-  bottom: 30px;
-  transform: translateX(-50%);
-  z-index: 2;
   color: #fff;
   font-size: 1.4rem;
   font-weight: 600;
@@ -341,4 +340,28 @@
   letter-spacing: 1px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.18);
   text-transform: uppercase;
+  margin: 8px 0 0 0;
+  display: inline-block;
+}
+
+.cardContent {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  text-align: center;
+  width: 90%;
+}
+
+.countryContinent {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin: 0 0 4px 0;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  backdrop-filter: blur(5px);
+  display: inline-block;
 }

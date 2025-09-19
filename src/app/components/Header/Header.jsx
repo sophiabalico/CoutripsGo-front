@@ -9,7 +9,7 @@ export default function Header() {
         <a href="/paises">Explorar Países</a>
         <a href="/favoritos">Meus Favoritos</a>
         <a href="/sobre">Sobre</a>
-        <a href="contato">Contato</a>
+        <a href="/contato">Contato</a>
       </nav>
     </header>
   );

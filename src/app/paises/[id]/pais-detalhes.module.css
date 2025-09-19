@@ -1,0 +1,497 @@
+/* Página de Detalhes do País */
+.pageContainer {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  background: #000; /* Fundo escuro de fallback */
+}
+
+/* Garantir que elementos apareçam acima do fundo */
+.pageContainer > * {
+  position: relative;
+  z-index: 10;
+}
+
+/* Hero Section com imagem específica do país */
+.heroSection {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.heroImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.heroImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 2;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  color: white;
+  max-width: 800px;
+  padding: 0 20px;
+}
+
+/* Loading e Error States */
+.loadingContainer, .errorContainer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  color: white;
+  padding: 40px 20px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.errorContainer h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #ff6b6b;
+}
+
+.errorContainer p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+
+/* Container do botão voltar */
+.backButtonContainer {
+  position: absolute;
+  top: 100px; /* Espaço para o header */
+  left: 20px;
+  z-index: 20;
+}
+
+
+/* Hero Section */
+.heroSection {
+  position: relative;
+  height: 70vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.heroImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 2;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  color: white;
+  max-width: 800px;
+  padding: 0 20px;
+}
+
+.countryTitle {
+  font-size: 4rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(45deg, #fff, #e3f2fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.countrySubtitle {
+  font-size: 1.5rem;
+  font-weight: 300;
+  opacity: 0.9;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Main Content */
+.mainContent {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  min-height: 100vh;
+}
+
+.infoSection, .descriptionSection, .attractionsSection, 
+.curiositiesSection, .cultureSection {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 35px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+}
+
+.infoSection:hover, .descriptionSection:hover, .attractionsSection:hover,
+.curiositiesSection:hover, .cultureSection:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 50px rgba(0, 0, 0, 0.18);
+}
+
+.infoSection h2, .descriptionSection h2, .attractionsSection h2,
+.curiositiesSection h2, .cultureSection h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: white;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Info Grid */
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.infoCard {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 25px;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.infoCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #3498db, #2ecc71, #f39c12, #e74c3c);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.infoCard:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.infoCard:hover::before {
+  opacity: 1;
+}
+
+.infoIcon {
+  font-size: 2.8rem;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.infoCard h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.infoCard p {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Descrição */
+.description {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #444;
+  text-align: justify;
+}
+
+/* Atrações */
+.attractionsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.attractionItem {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.attractionItem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3498db, #2ecc71);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.attractionItem:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}
+
+.attractionItem:hover::before {
+  opacity: 1;
+}
+
+.attractionImage {
+  width: 100%;
+  height: 200px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.attractionImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.attractionItem:hover .attractionImage img {
+  transform: scale(1.05);
+}
+
+.attractionContent h4 {
+  margin: 0 0 10px 0;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.attractionContent p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+
+
+/* Curiosidades */
+.curiositiesList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.curiosityItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.curiosityItem::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #f39c12, #e74c3c);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.curiosityItem:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.curiosityItem:hover::before {
+  opacity: 1;
+}
+
+.curiosityIcon {
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  flex-shrink: 0;
+}
+
+.curiosityContent {
+  flex: 1;
+}
+
+.curiosityContent h4 {
+  margin: 0 0 8px 0;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.curiosityContent p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.curiosityContent p {
+  margin: 0;
+  color: #666;
+  line-height: 1.6;
+}
+
+
+
+/* Cultura */
+.cultureText {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #444;
+  text-align: justify;
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .countryTitle {
+    font-size: 2.5rem;
+  }
+  
+  .countrySubtitle {
+    font-size: 1.2rem;
+  }
+  
+  .heroSection {
+    height: 50vh;
+  }
+  
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .attractionsList {
+    grid-template-columns: 1fr;
+  }
+  
+  .mainContent {
+    padding: 30px 15px;
+  }
+  
+  .infoSection, .descriptionSection, .attractionsSection, 
+  .curiositiesSection, .cultureSection {
+    padding: 25px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .countryTitle {
+    font-size: 2rem;
+  }
+  
+  .heroSection {
+    height: 40vh;
+  }
+  
+  .infoCard {
+    padding: 20px;
+  }
+  
+  .curiosityItem {
+    padding: 15px;
+  }
+}
