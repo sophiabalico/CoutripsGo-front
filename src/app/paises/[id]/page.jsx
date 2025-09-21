@@ -10,6 +10,57 @@ export default function PaisDetalhesPage() {
   const [country, setCountry] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // Funções de favoritos
+  const getFavorites = () => {
+    if (typeof window !== 'undefined') {
+      const favorites = localStorage.getItem('favoriteCountries');
+      return favorites ? JSON.parse(favorites) : [];
+    }
+    return [];
+  };
+
+  const saveFavorites = (favorites) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('favoriteCountries', JSON.stringify(favorites));
+    }
+  };
+
+  const toggleFavorite = () => {
+    if (!country) return;
+    
+    const favorites = getFavorites();
+    const countryExists = favorites.find(fav => fav.id === country.id);
+    
+    if (countryExists) {
+      // Remover dos favoritos
+      const newFavorites = favorites.filter(fav => fav.id !== country.id);
+      saveFavorites(newFavorites);
+      setIsFavorite(false);
+    } else {
+      // Adicionar aos favoritos
+      const favoriteCountry = {
+        id: country.id,
+        name: country.name,
+        location: country.location,
+        image: getCountryImage(country),
+        flag: country.flag
+      };
+      const newFavorites = [...favorites, favoriteCountry];
+      saveFavorites(newFavorites);
+      setIsFavorite(true);
+    }
+  };
+
+  // Verificar se o país está nos favoritos
+  useEffect(() => {
+    if (country) {
+      const favorites = getFavorites();
+      const isCountryFavorite = favorites.some(fav => fav.id === country.id);
+      setIsFavorite(isCountryFavorite);
+    }
+  }, [country]);
 
   useEffect(() => {
     const fetchCountryDetails = async () => {
@@ -51,23 +102,72 @@ export default function PaisDetalhesPage() {
     }
   }, [params.id]);
 
+  // Função para lidar com erro de carregamento de imagem
+  const handleImageError = (e) => {
+    console.log(`❌ Erro ao carregar: ${e.target.src}`); // Debug
+    
+    const currentSrc = e.target.src;
+    
+    // Tenta URLs alternativas
+    if (currentSrc.includes('public/image/')) {
+      // Tenta sem o 'public'
+      e.target.src = currentSrc.replace('public/image/', '/image/');
+      console.log(`🔄 Tentando sem 'public': ${e.target.src}`);
+    } else if (currentSrc.includes('/image/') && !currentSrc.includes('/images/') && currentSrc.includes('localhost:5000')) {
+      // Tenta com 'images' plural no backend
+      e.target.src = currentSrc.replace('/image/', '/images/');
+      console.log(`🔄 Tentando 'images' plural no backend: ${e.target.src}`);
+    } else if (currentSrc.includes('localhost:5000')) {
+      // Tenta imagem local sem backend
+      const imageName = currentSrc.split('/').pop();
+      e.target.src = `/image/${imageName}`;
+      console.log(`🔄 Tentando imagem local: ${e.target.src}`);
+    } else if (currentSrc.includes('/image/') && !currentSrc.includes('unsplash')) {
+      // Fallback para Unsplash
+      e.target.src = "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop";
+      console.log(`🚫 Usando fallback externo`);
+    } else {
+      // Fallback final - imagem padrão local
+      e.target.src = '/image/default-country.jpg';
+      console.log(`🚫 Usando fallback local final`);
+    }
+  };
+
   // Função para obter a URL da imagem do backend
   const getCountryImage = (country) => {
-    if (country.imageUrl) return country.imageUrl;
-    if (country.image) return country.image;
+    console.log(`🔍 [HERO SECTION] Buscando imagem para país:`, country); // Debug
     
-    // Fallback para imagem local baseada no nome
+    // Se o país já tem uma URL de imagem da API, usa ela diretamente
+    if (country.image) {
+      console.log(`✅ [HERO SECTION] Imagem encontrada na API: ${country.image}`); // Debug
+      return country.image;
+    }
+    
+    // Se tem um campo imageUrl
+    if (country.imageUrl) {
+      console.log(`✅ [HERO SECTION] ImageUrl encontrada na API: ${country.imageUrl}`); // Debug
+      return country.imageUrl;
+    }
+    
+    // Se tem um campo photo
+    if (country.photo) {
+      console.log(`✅ [HERO SECTION] Photo encontrada na API: ${country.photo}`); // Debug
+      return country.photo;
+    }
+    
+    // Normaliza o nome do país para construir a URL
     const normalizedName = country.name
-      ?.toLowerCase()
-      .replace(/\s+/g, '')
-      .replace(/[áàâã]/g, 'a')
-      .replace(/[éèê]/g, 'e')
-      .replace(/[íì]/g, 'i')
-      .replace(/[óòôõ]/g, 'o')
-      .replace(/[úù]/g, 'u')
-      .replace(/[ç]/g, 'c');
+      .toLowerCase()
+      .normalize('NFD')                           // Remove acentos
+      .replace(/[\u0300-\u036f]/g, '')           
+      .replace(/\s+/g, '')                       // Remove espaços
+      .replace(/[^a-z0-9]/g, '');                // Remove caracteres especiais
     
-    return `/image/${normalizedName}.png`;
+    // Constrói a URL baseada no padrão do seu backend
+    const imageUrl = `http://localhost:5000/public/image/${normalizedName}.png`;
+    console.log(`🌐 [HERO SECTION] URL construída: ${imageUrl}`); // Debug
+    
+    return imageUrl;
   };
 
   // Função para formatar custo
@@ -136,14 +236,24 @@ export default function PaisDetalhesPage() {
           <img 
             src={getCountryImage(country)} 
             alt={`Paisagem de ${country.name}`}
-            onError={(e) => {
-              e.target.src = '/image/default-country.jpg';
-            }}
+            onError={handleImageError}
+            onLoad={() => console.log(`✅ Imagem carregada com sucesso na hero section: ${getCountryImage(country)}`)}
           />
           <div className={styles.heroOverlay}></div>
         </div>
         <div className={styles.heroContent}>
-          <h1 className={styles.countryTitle}>{country.name}</h1>
+          <div className={styles.titleSection}>
+            <h1 className={styles.countryTitle}>{country.name}</h1>
+            <button 
+              className={`${styles.favoriteButton} ${isFavorite ? styles.favoriteActive : ''}`}
+              onClick={toggleFavorite}
+              title={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+            >
+              <span className={styles.heartIcon}>
+                {isFavorite ? "❤️" : "🤍"}
+              </span>
+            </button>
+          </div>
           <p className={styles.countrySubtitle}>
             {country.location || 'Localização não informada'}
           </p>
@@ -152,6 +262,29 @@ export default function PaisDetalhesPage() {
 
       {/* Conteúdo principal */}
       <div className={styles.mainContent}>
+        
+        {/* Seção especial da bandeira */}
+        <div className={styles.flagSection}>
+          <div className={styles.flagDisplay}>
+            {country.flag ? (
+              <img 
+                src={country.flag} 
+                alt={`Bandeira de ${country.name}`}
+                className={styles.countryFlag}
+                onError={(e) => {
+                  e.target.parentElement.innerHTML = '<div class="' + styles.flagFallback + '">🏳️</div>';
+                }}
+              />
+            ) : (
+              <div className={styles.flagFallback}>🏳️</div>
+            )}
+            <div className={styles.flagInfo}>
+              <h3>Bandeira Nacional</h3>
+              <p>Símbolo oficial de {country.name}</p>
+            </div>
+          </div>
+        </div>
+
         {/* Informações básicas */}
         <div className={styles.infoSection}>
           <h2>Informações Gerais</h2>
@@ -178,12 +311,6 @@ export default function PaisDetalhesPage() {
               <div className={styles.infoIcon}>�</div>
               <h3>Custo de Viagem</h3>
               <p>{formatCost(country.cost)}</p>
-            </div>
-
-            <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>🏳️</div>
-              <h3>Bandeira</h3>
-              <p>{renderSafeContent(country.flag, '🏳️')}</p>
             </div>
 
             <div className={styles.infoCard}>
