@@ -188,6 +188,55 @@ export default function PaisDetalhesPage() {
     return imageUrl;
   };
 
+  // Função para obter a URL da bandeira com fallback
+  const getCountryFlag = (country) => {
+    console.log(`🏳️ Buscando bandeira para país:`, country);
+    
+    // Se tem bandeira da API, usa ela
+    if (country.flag) {
+      console.log(`✅ Bandeira encontrada na API: ${country.flag}`);
+      return country.flag;
+    }
+    
+    // Fallback para bandeiras da Wikipedia baseado no nome do país
+    const flagMapping = {
+      'brasil': 'https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg',
+      'estados unidos': 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg',
+      'frança': 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Flag_of_France.svg',
+      'japão': 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Flag_of_Japan.svg',
+      'italia': 'https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Italy.svg',
+      'itália': 'https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Italy.svg',
+      'alemanha': 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Germany.svg',
+      'egito': 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_Egypt.svg',
+      'tailândia': 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg',
+      'austrália': 'https://upload.wikimedia.org/wikipedia/commons/8/88/Flag_of_Australia_%28converted%29.svg',
+      'australia': 'https://upload.wikimedia.org/wikipedia/commons/8/88/Flag_of_Australia_%28converted%29.svg',
+      'islândia': 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Flag_of_Iceland.svg',
+      'islandia': 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Flag_of_Iceland.svg',
+      'grécia': 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Greece.svg',
+      'grecia': 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Greece.svg',
+      'suíça': 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Switzerland.svg',
+      'suica': 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Switzerland.svg',
+      'polônia': 'https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_Poland.svg',
+      'polonia': 'https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_Poland.svg',
+      'nova zelândia': 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg',
+      'nova zelandia': 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg',
+      'chile': 'https://upload.wikimedia.org/wikipedia/commons/7/78/Flag_of_Chile.svg'
+    };
+    
+    const normalizedName = country.name?.toLowerCase() || '';
+    const flagUrl = flagMapping[normalizedName];
+    
+    if (flagUrl) {
+      console.log(`✅ Bandeira fallback encontrada: ${flagUrl}`);
+      return flagUrl;
+    }
+    
+    console.log(`⚠️ Nenhuma bandeira encontrada para: ${country.name}`);
+    // Fallback final - tenta uma URL genérica baseada no nome
+    return `https://flagcdn.com/w320/${normalizedName.substring(0, 2)}.png`;
+  };
+
   // Função para formatar custo
   const formatCost = (cost) => {
     if (!cost) return "Não informado";
@@ -286,18 +335,22 @@ export default function PaisDetalhesPage() {
         {/* Seção especial da bandeira */}
         <div className={styles.flagSection}>
           <div className={styles.flagDisplay}>
-            {country.flag ? (
-              <img 
-                src={country.flag} 
-                alt={`Bandeira de ${country.name}`}
-                className={styles.countryFlag}
-                onError={(e) => {
+            <img 
+              src={getCountryFlag(country)} 
+              alt={`Bandeira de ${country.name}`}
+              className={styles.countryFlag}
+              onError={(e) => {
+                console.log(`❌ Erro ao carregar bandeira: ${e.target.src}`);
+                // Tenta uma URL alternativa
+                if (!e.target.src.includes('flagcdn.com')) {
+                  e.target.src = `https://flagcdn.com/w320/${country.name?.toLowerCase().substring(0, 2)}.png`;
+                } else {
+                  // Se todas falharam, mostra o emoji
                   e.target.parentElement.innerHTML = '<div class="' + styles.flagFallback + '">🏳️</div>';
-                }}
-              />
-            ) : (
-              <div className={styles.flagFallback}>🏳️</div>
-            )}
+                }
+              }}
+              onLoad={() => console.log(`✅ Bandeira carregada: ${getCountryFlag(country)}`)}
+            />
             <div className={styles.flagInfo}>
               <h3>Bandeira Nacional</h3>
               <p>Símbolo oficial de {country.name}</p>
