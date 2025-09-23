@@ -9,20 +9,19 @@ export default function Sobre() {
         <div className={styles.heroContent}>
           <div className={styles.photoContainer}>
             <Image
-              src="/image/minha-foto.jpg" // Substitua pelo caminho da sua foto
-              alt="Minha foto"
+              src="/image/Sophia.png"
+              alt="Foto de Perfil"
               width={300}
               height={300}
               className={styles.profilePhoto}
             />
           </div>
           <div className={styles.heroText}>
-            <h1 className={styles.title}>Olá, eu sou [Seu Nome]</h1>
-            <p className={styles.subtitle}>Desenvolvedor(a) Full Stack & Apaixonado(a) por Viagens</p>
+            <h1 className={styles.title}>Olá, eu sou Sophia Balico</h1>
+            <p className={styles.subtitle}>Desenvolvedora Full Stack & Apaixonadoa por Viagens</p>
             <p className={styles.description}>
-              Bem-vindo(a) ao CoutripsGo! Sou apaixonado(a) por tecnologia e viagens, 
-              e este projeto nasceu da minha vontade de ajudar pessoas a descobrirem 
-              destinos incríveis ao redor do mundo.
+              Bem-vindo(a) ao CoutripsGo! Sou apaixonada por tecnologia e viagens, 
+              e este projeto nasceu da minha vontade de ajudar pessoas a descobrirem destinos incríveis ao redor do mundo.
             </p>
           </div>
         </div>
@@ -124,7 +123,7 @@ export default function Sobre() {
           </p>
           <div className={styles.socialLinks}>
             <a 
-              href="https://github.com/seuusuario" 
+              href="https://github.com/sophiabalico" 
               target="_blank" 
               rel="noopener noreferrer"
               className={styles.socialLink}
@@ -136,7 +135,7 @@ export default function Sobre() {
             </a>
             
             <a 
-              href="https://linkedin.com/in/seuusuario" 
+              href="https://www.linkedin.com/in/sophia-balico-1366542b1?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" 
               target="_blank" 
               rel="noopener noreferrer"
               className={styles.socialLink}
@@ -148,7 +147,7 @@ export default function Sobre() {
             </a>
             
             <a 
-              href="https://instagram.com/seuusuario" 
+              href="https://www.instagram.com/sophiabalico/" 
               target="_blank" 
               rel="noopener noreferrer"
               className={styles.socialLink}
