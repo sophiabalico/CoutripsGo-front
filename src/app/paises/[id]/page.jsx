@@ -137,16 +137,34 @@ export default function PaisDetalhesPage() {
   const getCountryImage = (country) => {
     console.log(`🔍 [HERO SECTION] Buscando imagem para país:`, country); // Debug
     
-    // Se o país já tem uma URL de imagem da API, usa ela diretamente
+    // Prioriza a imagem fornecida pelo backend
+    if (country.imageUrl) {
+      console.log(`✅ [HERO SECTION] ImageUrl encontrada na API: ${country.imageUrl}`); // Debug
+      
+      // Se a URL começa com "public/image/", converte para o caminho correto da pasta pública
+      if (country.imageUrl.startsWith('public/image/')) {
+        const localImagePath = country.imageUrl.replace('public/image/', '/image/');
+        console.log(`🔄 [HERO SECTION] Convertendo para caminho local: ${localImagePath}`);
+        return localImagePath;
+      }
+      
+      // Se a URL já está em formato absoluto (http), usa diretamente
+      if (country.imageUrl.startsWith('http')) {
+        return country.imageUrl;
+      }
+      
+      // Se não começa com "/", adiciona o prefixo para pasta pública
+      if (!country.imageUrl.startsWith('/')) {
+        return `/image/${country.imageUrl}`;
+      }
+      
+      return country.imageUrl;
+    }
+    
+    // Se tem um campo image
     if (country.image) {
       console.log(`✅ [HERO SECTION] Imagem encontrada na API: ${country.image}`); // Debug
       return country.image;
-    }
-    
-    // Se tem um campo imageUrl
-    if (country.imageUrl) {
-      console.log(`✅ [HERO SECTION] ImageUrl encontrada na API: ${country.imageUrl}`); // Debug
-      return country.imageUrl;
     }
     
     // Se tem um campo photo
@@ -230,33 +248,35 @@ export default function PaisDetalhesPage() {
   return (
     <div className={styles.pageContainer}>
 
-      {/* Hero Section com imagem do país */}
-      <div className={styles.heroSection}>
-        <div className={styles.heroImage}>
+      {/* Seção de Entrada - Destaque da Imagem do País */}
+      <div className={styles.entrySection}>
+        <div className={styles.entryImageContainer}>
           <img 
             src={getCountryImage(country)} 
-            alt={`Paisagem de ${country.name}`}
+            alt={`Imagem principal de ${country.name}`}
+            className={styles.entryImage}
             onError={handleImageError}
-            onLoad={() => console.log(`✅ Imagem carregada com sucesso na hero section: ${getCountryImage(country)}`)}
+            onLoad={() => console.log(`✅ Imagem de entrada carregada: ${getCountryImage(country)}`)}
           />
-          <div className={styles.heroOverlay}></div>
-        </div>
-        <div className={styles.heroContent}>
-          <div className={styles.titleSection}>
-            <h1 className={styles.countryTitle}>{country.name}</h1>
-            <button 
-              className={`${styles.favoriteButton} ${isFavorite ? styles.favoriteActive : ''}`}
-              onClick={toggleFavorite}
-              title={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-            >
-              <span className={styles.heartIcon}>
-                {isFavorite ? "❤️" : "🤍"}
-              </span>
-            </button>
+          <div className={styles.entryOverlay}>
+            <div className={styles.entryContent}>
+              <div className={styles.titleSection}>
+                <h1 className={styles.entryTitle}>{country.name}</h1>
+                <button 
+                  className={`${styles.favoriteButton} ${isFavorite ? styles.favoriteActive : ''}`}
+                  onClick={toggleFavorite}
+                  title={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+                >
+                  <span className={styles.heartIcon}>
+                    {isFavorite ? "❤️" : "🤍"}
+                  </span>
+                </button>
+              </div>
+              <p className={styles.entryLocation}>
+                {country.location || 'Localização não informada'}
+              </p>
+            </div>
           </div>
-          <p className={styles.countrySubtitle}>
-            {country.location || 'Localização não informada'}
-          </p>
         </div>
       </div>
 
@@ -296,19 +316,19 @@ export default function PaisDetalhesPage() {
             </div>
 
             <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>�️</div>
+              <div className={styles.infoIcon}>🗨</div>
               <h3>Idioma</h3>
               <p>{renderSafeContent(country.language, 'Não informado')}</p>
             </div>
 
             <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>�</div>
+              <div className={styles.infoIcon}>💰</div>
               <h3>Moeda</h3>
               <p>{renderSafeContent(country.coin, 'Não informado')}</p>
             </div>
 
             <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>�</div>
+              <div className={styles.infoIcon}>✈️</div>
               <h3>Custo de Viagem</h3>
               <p>{formatCost(country.cost)}</p>
             </div>
