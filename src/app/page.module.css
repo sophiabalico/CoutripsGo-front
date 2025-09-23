@@ -8,12 +8,6 @@
   position: relative;
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-}
-
 .logo {
   color: white;
   font-size: 1.5rem;

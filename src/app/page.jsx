@@ -13,7 +13,6 @@ export default function HomePage() {
 
   return (
     <div className={styles.hero}>
-      <div className={styles.overlay}></div>
       <HeroSection />
       <DestinosPopulares places={places} />
     </div>

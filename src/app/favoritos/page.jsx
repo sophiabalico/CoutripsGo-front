@@ -98,6 +98,7 @@ export default function FavoritosPage() {
   if (loading) {
     return (
       <div className={styles.container}>
+        <div className={styles.overlay}></div>
         <div className={styles.loadingContainer}>
           <div className={styles.spinner}></div>
           <p>Carregando favoritos...</p>
@@ -108,6 +109,7 @@ export default function FavoritosPage() {
 
   return (
     <div className={styles.container}>
+      <div className={styles.overlay}></div>
       <div className={styles.header}>
         <h1 className={styles.title}>Meus Países Favoritos</h1>
         <p className={styles.subtitle}>
