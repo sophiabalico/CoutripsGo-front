@@ -77,7 +77,7 @@ export default function PaisesPage() {
     
     // Primeiro filtrar por texto de pesquisa
     let filtered = countries.filter(country => 
-      country.name && country.name.toLowerCase().includes(query.toLowerCase())
+      country.name && country.name.toLowerCase().startsWith(query.toLowerCase())
     );
 
     console.log("📝 Após filtro de pesquisa:", filtered.length);
@@ -129,21 +129,17 @@ export default function PaisesPage() {
     }
 
     // Ordenação
-    filtered.sort((a, b) => {
-      switch (sort) {
-        case "name":
-          return (a.name || "").localeCompare(b.name || "");
-        case "name-desc":
-          return (b.name || "").localeCompare(a.name || "");
-        case "continent":
-          const aCont = a.continent || a.region || a.subregion || "";
-          const bCont = b.continent || b.region || b.subregion || "";
-          return aCont.localeCompare(bCont);
-        case "original":
-        default:
-          return 0; // Mantém a ordem original
-      }
-    });
+    if (sort === "name") {
+      filtered = [...filtered].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+    } else if (sort === "name-desc") {
+      filtered = [...filtered].sort((a, b) => (b.name || "").localeCompare(a.name || ""));
+    } else if (sort === "continent") {
+      filtered = [...filtered].sort((a, b) => {
+        const aCont = a.continent || a.region || a.subregion || "";
+        const bCont = b.continent || b.region || b.subregion || "";
+        return aCont.localeCompare(bCont);
+      });
+    }
 
     return filtered;
   };
