@@ -2,12 +2,44 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import styles from "../DestinosPopulares/DestinosPopulares.module.css";
 
 export default function DestinosPopulares() {
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const router = useRouter();
+
+  const fetchCountries = async () => {
+    try {
+      console.log("🚀 Iniciando busca de países para destinos populares...");
+      setError(null);
+      
+      const response = await axios.get("http://localhost:5000/country");
+      console.log("🌍 Resposta da API recebida:", response);
+      console.log("📊 Status da resposta:", response.status);
+      console.log("📊 Dados da API recebidos para destinos populares:", response.data?.length || 0, "países");
+      
+      if (!response.data || !Array.isArray(response.data)) {
+        throw new Error("API não retornou um array de países");
+      }
+      
+      // Pegar apenas os primeiros 5 países válidos
+      const validCountries = response.data.filter(country => country && country.name).slice(0, 5);
+      console.log("✅ 5 países selecionados:", validCountries.map(c => c.name));
+      console.log("📋 Dados completos dos países:", validCountries);
+      
+      setCountries(validCountries);
+    } catch (error) {
+      console.error("❌ Erro ao carregar países para destinos populares:", error);
+      console.error("❌ Detalhes do erro:", error.response?.data || error.message);
+      setError(`Erro ao carregar destinos: ${error.message}`);
+      setCountries([]); // Garantir que countries seja um array vazio em caso de erro
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Função para obter a URL da imagem do país
   const getCountryImage = (country) => {
@@ -76,25 +108,11 @@ export default function DestinosPopulares() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:5000/country")
-      .then((res) => res.json())
-      .then((data) => {        
-        console.log("🌍 Dados da API recebidos para destinos populares:", data.length, "países");
-        
-        // Pegar apenas os primeiros 5 países válidos
-        const validCountries = data.filter(country => country.name).slice(0, 5);
-        console.log("✅ 5 países selecionados:", validCountries.map(c => c.name));
-        
-        setCountries(validCountries);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching countries for popular destinations:", error);
-        setLoading(false);
-      });
+    fetchCountries();
   }, []);
 
   if (loading) {
+    console.log("⏳ Estado de loading ativo...");
     return (
       <section className={styles.destinations}>
         <h3>Destinos Populares</h3>
@@ -105,26 +123,52 @@ export default function DestinosPopulares() {
     );
   }
 
+  console.log("🎯 Renderizando destinos populares com:", countries.length, "países");
+  console.log("📋 Lista de países:", countries);
+  console.log("❌ Erro atual:", error);
+
+  if (error) {
+    return (
+      <section className={styles.destinations}>
+        <h3>Destinos Populares</h3>
+        <div className={styles.grid}>
+          <div style={{color: 'red', padding: '20px'}}>
+            {error}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className={styles.destinations}>
       <h3>Destinos Populares</h3>
       <div className={styles.grid}>
-        {countries.map((country) => (
-          <div 
-            key={country.id || country._id} 
-            className={styles.card}
-            onClick={() => handleCountryClick(country)}
-            style={{ cursor: 'pointer' }}
-          >
-            <img 
-              src={getCountryImage(country)} 
-              alt={country.name}
-              onError={handleImageError}
-              loading="lazy"
-            />
-            <div className={styles.cardTitle}>{country.name}</div>
+        {countries.length === 0 ? (
+          <div style={{color: 'white', padding: '20px'}}>
+            Nenhum destino encontrado (total: {countries.length})
           </div>
-        ))}
+        ) : (
+          countries.map((country) => {
+            console.log("🗂️ Renderizando card para:", country.name);
+            return (
+              <div 
+                key={country.id || country._id || country.name} 
+                className={styles.card}
+                onClick={() => handleCountryClick(country)}
+                style={{ cursor: 'pointer' }}
+              >
+                <img 
+                  src={getCountryImage(country)} 
+                  alt={country.name}
+                  onError={handleImageError}
+                  loading="lazy"
+                />
+                <div className={styles.cardTitle}>{country.name}</div>
+              </div>
+            );
+          })
+        )}
       </div>
     </section>
   );

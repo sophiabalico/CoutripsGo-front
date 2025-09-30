@@ -48,14 +48,6 @@
 	letter-spacing: -0.02em;
 }
 
-.subtitulo {
-	font-size: 1.2rem;
-	margin-bottom: 32px;
-	color: rgba(255, 255, 255, 0.8);
-	text-align: center;
-	line-height: 1.6;
-}
-
 .formulario {
 	width: 100%;
 	display: flex;
@@ -74,6 +66,36 @@
 	color: #fff;
 	transition: all 0.3s ease;
 	font-family: inherit;
+}
+
+/* Remove autofill background */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus,
+.input:-webkit-autofill:active {
+	-webkit-box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.08) inset !important;
+	-webkit-text-fill-color: #fff !important;
+	background: rgba(255, 255, 255, 0.08) !important;
+	border: 1px solid rgba(255, 255, 255, 0.2) !important;
+	transition: background-color 5000s ease-in-out 0s !important;
+}
+
+/* Remove autofill para Firefox */
+.input:-moz-autofill {
+	background: rgba(255, 255, 255, 0.08) !important;
+	color: #fff !important;
+}
+
+/* Remove autofill background when there are suggestions */
+.input[type="email"]:-webkit-autofill,
+.input[type="email"]:-webkit-autofill:hover,
+.input[type="email"]:-webkit-autofill:focus,
+.input[type="email"]:-webkit-autofill:active {
+	-webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.08) inset !important;
+	-webkit-text-fill-color: #fff !important;
+	background-color: rgba(255, 255, 255, 0.08) !important;
+	background-image: none !important;
+	transition: background-color 5000s ease-in-out 0s !important;
 }
 
 .input::placeholder, .textarea::placeholder {

@@ -1,31 +1,67 @@
-/* Carrossel de países */
+/* Carrossel de países - Responsivo */
 .carrosselContainer {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 20px 20px;
+  padding: clamp(15px, 3vw, 20px);
   position: relative;
   z-index: 2;
 }
 
 .swiper {
   width: 100%;
-  padding-top: 50px;
-  padding-bottom: 50px;
+  padding-top: clamp(30px, 5vw, 50px);
+  padding-bottom: clamp(30px, 5vw, 50px);
   overflow: visible;
 }
 
 .swiper-slide {
   background-position: center;
   background-size: cover;
-  width: 300px !important;
-  height: 380px;
+  width: clamp(250px, 25vw, 300px) !important;
+  height: clamp(300px, 35vw, 380px);
+  transition: all 0.3s ease;
 }
 
 .swiper-slide-active .card {
-  transform: scale(1.1);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  transform: scale(clamp(1.05, 1.1, 1.15));
+  box-shadow: 0 clamp(15px, 2.5vw, 20px) clamp(30px, 4vw, 40px) rgba(0,0,0,0.5);
   z-index: 999;
+}
+
+/* Media Queries para Responsividade Adicional */
+@media (max-width: 480px) {
+  .carrosselContainer {
+    padding: 10px;
+  }
+  
+  .swiper {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  
+  .swiper-slide {
+    width: 220px !important;
+    height: 280px;
+  }
+}
+
+@media (max-width: 320px) {
+  .swiper-slide {
+    width: 200px !important;
+    height: 260px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .carrosselContainer {
+    max-width: 1600px;
+  }
+  
+  .swiper-slide {
+    width: 320px !important;
+    height: 400px;
+  }
 }
 .section {
   min-height: 100vh;
@@ -275,12 +311,12 @@
 
 .card {
   position: relative;
-  border-radius: 16px;
+  border-radius: clamp(12px, 2vw, 16px);
   overflow: hidden;
   cursor: pointer;
-  width: 280px;
-  height: 360px;
-  margin: 10px;
+  width: clamp(220px, 25vw, 280px);
+  height: clamp(280px, 32vw, 360px);
+  margin: clamp(5px, 1vw, 10px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -290,12 +326,12 @@
 }
 
 .card:hover {
-  transform: translateY(-8px) scale(1.04);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+  transform: translateY(clamp(-6px, -1vw, -8px)) scale(clamp(1.02, 1.04, 1.05));
+  box-shadow: 0 clamp(8px, 1.5vw, 12px) clamp(24px, 4vw, 32px) rgba(0,0,0,0.35);
 }
 
 .card:active {
-  transform: translateY(-4px) scale(1.02);
+  transform: translateY(clamp(-3px, -0.5vw, -4px)) scale(clamp(1.01, 1.02, 1.03));
 }
 
 .card img {
@@ -306,11 +342,45 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
-  border-radius: 16px;
+  border-radius: clamp(12px, 2vw, 16px);
 }
 
 .card:hover img {
-  transform: scale(1.1);
+  transform: scale(clamp(1.05, 1.1, 1.15));
+}
+
+/* Responsividade específica para cards */
+@media (max-width: 480px) {
+  .card {
+    width: 200px;
+    height: 260px;
+    margin: 5px;
+    border-radius: 12px;
+  }
+  
+  .card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  }
+  
+  .card img {
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 320px) {
+  .card {
+    width: 180px;
+    height: 240px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .card {
+    width: 300px;
+    height: 380px;
+    margin: 12px;
+  }
 }
 
 .overlay {
@@ -331,22 +401,22 @@
 
 .countryName {
   color: #fff;
-  font-size: 1.4rem;
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
   font-weight: 600;
-  padding: 12px 22px;
+  padding: clamp(8px, 1.5vw, 12px) clamp(16px, 3vw, 22px);
   background: rgba(0,0,0,0.55);
-  border-radius: 10px;
+  border-radius: clamp(8px, 1.5vw, 10px);
   text-shadow: 0 2px 8px rgba(0,0,0,0.7);
-  letter-spacing: 1px;
+  letter-spacing: clamp(0.5px, 0.15vw, 1px);
   box-shadow: 0 2px 8px rgba(0,0,0,0.18);
   text-transform: uppercase;
-  margin: 8px 0 0 0;
+  margin: clamp(4px, 1vw, 8px) 0 0 0;
   display: inline-block;
 }
 
 .cardContent {
   position: absolute;
-  bottom: 20px;
+  bottom: clamp(12px, 2.5vw, 20px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
@@ -356,12 +426,45 @@
 
 .countryContinent {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 0.9rem;
+  font-size: clamp(0.75rem, 1.8vw, 0.9rem);
   font-weight: 500;
-  margin: 0 0 4px 0;
-  padding: 6px 12px;
+  margin: 0 0 clamp(3px, 0.8vw, 4px) 0;
+  padding: clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 12px);
   background: rgba(255, 255, 255, 0.15);
-  border-radius: 15px;
+  border-radius: clamp(12px, 2vw, 15px);
   backdrop-filter: blur(5px);
   display: inline-block;
+}
+
+/* Responsividade específica para texto dos cards */
+@media (max-width: 480px) {
+  .countryName {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    letter-spacing: 0.5px;
+    margin: 4px 0 0 0;
+  }
+  
+  .cardContent {
+    bottom: 10px;
+    width: 85%;
+  }
+  
+  .countryContinent {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    margin: 0 0 2px 0;
+  }
+}
+
+@media (max-width: 320px) {
+  .countryName {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
+  
+  .countryContinent {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+  }
 }

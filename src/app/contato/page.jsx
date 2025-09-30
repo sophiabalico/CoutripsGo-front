@@ -13,13 +13,11 @@ export default function ContatoPage() {
 	function handleSubmit(e) {
 		e.preventDefault();
 		setEnviado(true);
-		// Aqui você pode adicionar lógica para enviar o feedback para uma API
 	}
 
 	return (
 		<div className={styles.contatoContainer}>
-			<h2 className={styles.titulo}>Fale Conosco</h2>
-			<p className={styles.subtitulo}>Envie seu feedback, sugestão ou dúvida!</p>
+			<h2 className={styles.titulo}>Envie seu feedback, sugestão ou dúvida!</h2>
 			<form className={styles.formulario} onSubmit={handleSubmit}>
 				<input
 					type="text"
@@ -38,6 +36,7 @@ export default function ContatoPage() {
 					onChange={handleChange}
 					required
 					className={styles.input}
+					autoComplete="off"
 				/>
 				<textarea
 					name="mensagem"
@@ -50,7 +49,7 @@ export default function ContatoPage() {
 				<button type="submit" className={styles.botao}>Enviar</button>
 			</form>
 			{enviado && (
-				<div className={styles.sucesso}>Obrigado pelo seu feedback!</div>
+				<div className={styles.sucesso} style={{color: 'white'}}>Obrigada pelo seu feedback!</div>
 			)}
 		</div>
 	);

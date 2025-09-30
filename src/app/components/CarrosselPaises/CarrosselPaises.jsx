@@ -6,27 +6,31 @@ import "swiper/css/effect-coverflow";
 import "swiper/css/navigation";
 import "swiper/css/autoplay";
 import { EffectCoverflow, Navigation, Autoplay } from "swiper/modules";
-import styles from "../paises/paises.module.css";
+import styles from "../../paises/paises.module.css";
 
 export default function CarrosselPaises({ countries }) {
   const router = useRouter();
   console.log("🎠 CarrosselPaises iniciado");
   console.log("📊 Countries recebidos:", countries);
   console.log("📈 Quantidade de países:", countries ? countries.length : 0);
+  console.log("🔍 Tipo da prop countries:", typeof countries);
+  console.log("📋 É array?", Array.isArray(countries));
   
   // Log da estrutura do primeiro país para debug
   if (countries && countries.length > 0) {
     console.log("🔍 Estrutura do primeiro país:", countries[0]);
     console.log("🖼️ Campo 'image' existe?", countries[0].image ? "SIM" : "NÃO");
+    console.log("🏳️ Campo 'flag' existe?", countries[0].flag ? "SIM" : "NÃO");
+    console.log("📍 Campo 'name' existe?", countries[0].name ? "SIM" : "NÃO");
   }
 
   // Verificação de segurança
   if (!countries || countries.length === 0) {
-    console.log("⚠️ Nenhum país para exibir");
+    console.log("⚠️ Nenhum país para exibir no carrossel (total:", countries?.length || 0, ")");
     return (
       <div className={styles.carrosselContainer}>
         <div style={{ color: 'white', textAlign: 'center', padding: '20px' }}>
-          Carregando países...
+          Carregando países... (total recebido: {countries?.length || 0})
         </div>
       </div>
     );
@@ -110,6 +114,7 @@ export default function CarrosselPaises({ countries }) {
         autoplay={{
           delay: 3000,
           disableOnInteraction: false,
+          pauseOnMouseEnter: true,
         }}
         coverflowEffect={{
           rotate: 20,
@@ -123,15 +128,97 @@ export default function CarrosselPaises({ countries }) {
           prevEl: ".swiper-button-prev",
         }}
         breakpoints={{
-          640: {
+          // Mobile - 320px até 479px
+          320: {
             slidesPerView: 1,
+            spaceBetween: 15,
+            centeredSlides: true,
+            coverflowEffect: {
+              rotate: 30,
+              stretch: 0,
+              depth: 100,
+              modifier: 1,
+              slideShadows: true,
+            }
           },
+          // Mobile Large - 480px até 639px
+          480: {
+            slidesPerView: 1.2,
+            spaceBetween: 20,
+            centeredSlides: true,
+            coverflowEffect: {
+              rotate: 25,
+              stretch: 0,
+              depth: 150,
+              modifier: 1,
+              slideShadows: true,
+            }
+          },
+          // Tablet Portrait - 640px até 767px
+          640: {
+            slidesPerView: 2,
+            spaceBetween: 25,
+            centeredSlides: true,
+            coverflowEffect: {
+              rotate: 20,
+              stretch: 0,
+              depth: 180,
+              modifier: 1,
+              slideShadows: true,
+            }
+          },
+          // Tablet Landscape - 768px até 1023px
           768: {
             slidesPerView: 3,
+            spaceBetween: 30,
+            centeredSlides: true,
+            coverflowEffect: {
+              rotate: 20,
+              stretch: 0,
+              depth: 200,
+              modifier: 1,
+              slideShadows: true,
+            }
           },
+          // Desktop Small - 1024px até 1279px
           1024: {
-            slidesPerView: 5,
+            slidesPerView: 4,
+            spaceBetween: 35,
+            centeredSlides: true,
+            coverflowEffect: {
+              rotate: 15,
+              stretch: 0,
+              depth: 220,
+              modifier: 1,
+              slideShadows: true,
+            }
           },
+          // Desktop Large - 1280px até 1439px
+          1280: {
+            slidesPerView: 5,
+            spaceBetween: 40,
+            centeredSlides: true,
+            coverflowEffect: {
+              rotate: 15,
+              stretch: 0,
+              depth: 250,
+              modifier: 1,
+              slideShadows: true,
+            }
+          },
+          // Desktop XL - 1440px+
+          1440: {
+            slidesPerView: 6,
+            spaceBetween: 45,
+            centeredSlides: true,
+            coverflowEffect: {
+              rotate: 10,
+              stretch: 0,
+              depth: 280,
+              modifier: 1,
+              slideShadows: true,
+            }
+          }
         }}
         modules={[EffectCoverflow, Navigation, Autoplay]}
         className={styles.swiper}
@@ -166,8 +253,24 @@ export default function CarrosselPaises({ countries }) {
         ) : (
           <div>Nenhum país encontrado</div>
         )}
-        <div className="swiper-button-prev" style={{color: '#26658c', fontSize: '2rem', left: 0}}></div>
-        <div className="swiper-button-next" style={{color: '#26658c', fontSize: '2rem', right: 0}}></div>
+        
+        {/* Navegação responsiva */}
+        <div className="swiper-button-prev" style={{
+          color: '#26658c', 
+          fontSize: 'clamp(1.5rem, 2.5vw, 2.5rem)', 
+          left: 'clamp(5px, 2vw, 20px)',
+          width: 'clamp(40px, 6vw, 60px)',
+          height: 'clamp(40px, 6vw, 60px)',
+          marginTop: 'clamp(-20px, -3vw, -30px)'
+        }}></div>
+        <div className="swiper-button-next" style={{
+          color: '#26658c', 
+          fontSize: 'clamp(1.5rem, 2.5vw, 2.5rem)', 
+          right: 'clamp(5px, 2vw, 20px)',
+          width: 'clamp(40px, 6vw, 60px)',
+          height: 'clamp(40px, 6vw, 60px)',
+          marginTop: 'clamp(-20px, -3vw, -30px)'
+        }}></div>
       </Swiper>
     </div>
   );

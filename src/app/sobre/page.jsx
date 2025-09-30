@@ -33,7 +33,7 @@ export default function Sobre() {
           <h2 className={styles.sectionTitle}>Sobre Mim</h2>
           <div className={styles.aboutText}>
             <p>
-              Sou um(a) desenvolvedor(a) em constante evolução, sempre buscando 
+              Sou uma desenvolvedora em constante evolução, sempre buscando 
               aprender novas tecnologias e criar soluções inovadoras. Minha paixão 
               por viagens me inspirou a criar este projeto, unindo tecnologia e 
               turismo para proporcionar experiências únicas.

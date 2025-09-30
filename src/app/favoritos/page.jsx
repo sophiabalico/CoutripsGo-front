@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import styles from './favoritos.module.css';
 
 export default function FavoritosPage() {

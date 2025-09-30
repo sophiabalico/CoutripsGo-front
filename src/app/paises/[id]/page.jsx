@@ -2,7 +2,68 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import axios from 'axios';
 import styles from "./pais-detalhes.module.css";
+
+// Mapeamentos de bandeiras - extraídos para constantes
+const WIKIPEDIA_FLAG_MAPPING = {
+  'brasil': 'https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg',
+  'estados unidos': 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg',
+  'frança': 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Flag_of_France.svg',
+  'japão': 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Flag_of_Japan.svg',
+  'italia': 'https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Italy.svg',
+  'itália': 'https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Italy.svg',
+  'alemanha': 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Germany.svg',
+  'egito': 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_Egypt.svg',
+  'tailândia': 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg',
+  'austrália': 'https://upload.wikimedia.org/wikipedia/commons/8/88/Flag_of_Australia_%28converted%29.svg',
+  'australia': 'https://upload.wikimedia.org/wikipedia/commons/8/88/Flag_of_Australia_%28converted%29.svg',
+  'islândia': 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Flag_of_Iceland.svg',
+  'islandia': 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Flag_of_Iceland.svg',
+  'grécia': 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Greece.svg',
+  'grecia': 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Greece.svg',
+  'suíça': 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Switzerland.svg',
+  'suica': 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Switzerland.svg',
+  'polônia': 'https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_Poland.svg',
+  'polonia': 'https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_Poland.svg',
+  'nova zelândia': 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg',
+  'nova zelandia': 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg',
+  'chile': 'https://upload.wikimedia.org/wikipedia/commons/7/78/Flag_of_Chile.svg'
+};
+
+const COUNTRY_CODE_MAPPING = {
+  'brasil': 'br',
+  'estados unidos': 'us',
+  'frança': 'fr',
+  'japão': 'jp',
+  'italia': 'it',
+  'itália': 'it',
+  'alemanha': 'de',
+  'egito': 'eg',
+  'tailândia': 'th',
+  'austrália': 'au',
+  'australia': 'au',
+  'islândia': 'is',
+  'islandia': 'is',
+  'grécia': 'gr',
+  'grecia': 'gr',
+  'suíça': 'ch',
+  'suica': 'ch',
+  'polônia': 'pl',
+  'polonia': 'pl',
+  'nova zelândia': 'nz',
+  'nova zelandia': 'nz',
+  'chile': 'cl',
+  'espanha': 'es',
+  'reino unido': 'gb',
+  'canadá': 'ca',
+  'argentina': 'ar',
+  'méxico': 'mx',
+  'coreia do sul': 'kr',
+  'china': 'cn',
+  'índia': 'in',
+  'rússia': 'ru'
+};
 
 export default function PaisDetalhesPage() {
   const params = useParams();
@@ -65,18 +126,21 @@ export default function PaisDetalhesPage() {
   useEffect(() => {
     const fetchCountryDetails = async () => {
       try {
-        console.log("🌍 Buscando detalhes do país ID:", params.id);
+        console.log("�️ Iniciando busca de detalhes do país ID:", params.id);
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`http://localhost:5000/country/${params.id}`);
+        const response = await axios.get(`http://localhost:5000/country/${params.id}`);
+        console.log("📡 Resposta da API (Detalhes):", response);
+        console.log("📊 Dados do país recebidos:", response.data);
         
-        if (!response.ok) {
-          throw new Error(`Erro ${response.status}: País não encontrado`);
+        const data = response.data;
+        
+        if (!data) {
+          console.error("❌ Nenhum dado retornado para o país ID:", params.id);
+          setError('País não encontrado');
+          return;
         }
-
-        const data = await response.json();
-        console.log("📊 Dados do país recebidos:", data);
         
         // Debug das estruturas de dados do schema Prisma
         if (data.curiosities) {
@@ -89,9 +153,11 @@ export default function PaisDetalhesPage() {
         }
         
         setCountry(data);
+        console.log("✅ Detalhes do país carregados com sucesso!");
       } catch (err) {
         console.error("❌ Erro ao buscar país:", err);
-        setError(err.message);
+        console.error("🔍 Detalhes do erro:", err.response?.data || err.message);
+        setError(`Erro ao carregar país: ${err.message}`);
       } finally {
         setLoading(false);
       }
@@ -188,53 +254,56 @@ export default function PaisDetalhesPage() {
     return imageUrl;
   };
 
-  // Função para obter a URL da bandeira com fallback
+  // Função utilitária para normalizar nome do país
+  const normalizeCountryName = (countryName) => {
+    return countryName?.toLowerCase() || '';
+  };
+
+  // Função para obter URL da bandeira com fallback hierárquico
   const getCountryFlag = (country) => {
     console.log(`🏳️ Buscando bandeira para país:`, country);
     
-    // Se tem bandeira da API, usa ela
+    // Prioridade 1: Bandeira da API
     if (country.flag) {
-      console.log(`✅ Bandeira encontrada na API: ${country.flag}`);
+      console.log(`✅ Bandeira da API: ${country.flag}`);
       return country.flag;
     }
     
-    // Fallback para bandeiras da Wikipedia baseado no nome do país
-    const flagMapping = {
-      'brasil': 'https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg',
-      'estados unidos': 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg',
-      'frança': 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Flag_of_France.svg',
-      'japão': 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Flag_of_Japan.svg',
-      'italia': 'https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Italy.svg',
-      'itália': 'https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Italy.svg',
-      'alemanha': 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Germany.svg',
-      'egito': 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_Egypt.svg',
-      'tailândia': 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg',
-      'austrália': 'https://upload.wikimedia.org/wikipedia/commons/8/88/Flag_of_Australia_%28converted%29.svg',
-      'australia': 'https://upload.wikimedia.org/wikipedia/commons/8/88/Flag_of_Australia_%28converted%29.svg',
-      'islândia': 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Flag_of_Iceland.svg',
-      'islandia': 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Flag_of_Iceland.svg',
-      'grécia': 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Greece.svg',
-      'grecia': 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Greece.svg',
-      'suíça': 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Switzerland.svg',
-      'suica': 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Switzerland.svg',
-      'polônia': 'https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_Poland.svg',
-      'polonia': 'https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_Poland.svg',
-      'nova zelândia': 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg',
-      'nova zelandia': 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg',
-      'chile': 'https://upload.wikimedia.org/wikipedia/commons/7/78/Flag_of_Chile.svg'
-    };
+    const normalizedName = normalizeCountryName(country.name);
     
-    const normalizedName = country.name?.toLowerCase() || '';
-    const flagUrl = flagMapping[normalizedName];
-    
-    if (flagUrl) {
-      console.log(`✅ Bandeira fallback encontrada: ${flagUrl}`);
-      return flagUrl;
+    // Prioridade 2: Bandeiras do Wikipedia
+    const wikipediaFlag = WIKIPEDIA_FLAG_MAPPING[normalizedName];
+    if (wikipediaFlag) {
+      console.log(`✅ Bandeira Wikipedia: ${wikipediaFlag}`);
+      return wikipediaFlag;
     }
     
-    console.log(`⚠️ Nenhuma bandeira encontrada para: ${country.name}`);
-    // Fallback final - tenta uma URL genérica baseada no nome
+    // Prioridade 3: Bandeiras por código de país
+    const countryCode = COUNTRY_CODE_MAPPING[normalizedName];
+    if (countryCode) {
+      console.log(`✅ Bandeira por código: ${countryCode}`);
+      return `https://flagcdn.com/w320/${countryCode}.png`;
+    }
+    
+    // Fallback final
+    console.log(`⚠️ Usando fallback genérico para: ${country.name}`);
     return `https://flagcdn.com/w320/${normalizedName.substring(0, 2)}.png`;
+  };
+
+  // Função para tratar erros de carregamento de bandeira
+  const handleFlagError = (errorEvent, country) => {
+    console.log(`❌ Erro ao carregar bandeira: ${errorEvent.target.src}`);
+    
+    if (!errorEvent.target.src.includes('flagcdn.com')) {
+      const normalizedName = normalizeCountryName(country.name);
+      const countryCode = COUNTRY_CODE_MAPPING[normalizedName] || normalizedName.substring(0, 2);
+      
+      errorEvent.target.src = `https://flagcdn.com/w320/${countryCode}.png`;
+      console.log(`🔄 Tentando com código: ${countryCode}`);
+    } else {
+      // Fallback final: emoji
+      errorEvent.target.parentElement.innerHTML = `<div class="${styles.flagFallback}">🏳️</div>`;
+    }
   };
 
   // Função para formatar custo
@@ -261,6 +330,8 @@ export default function PaisDetalhesPage() {
     return fallback;
   };
 
+  console.log("🎯 Renderizando detalhes - Loading:", loading, "Country:", !!country, "Error:", error);
+
   if (loading) {
     return (
       <div className={styles.pageContainer}>
@@ -278,6 +349,7 @@ export default function PaisDetalhesPage() {
         <div className={styles.errorContainer}>
           <h2>Ops! Algo deu errado</h2>
           <p>{error}</p>
+          <p style={{color: '#999', fontSize: '0.9rem'}}>ID do país: {params.id}</p>
         </div>
       </div>
     );
@@ -339,16 +411,7 @@ export default function PaisDetalhesPage() {
               src={getCountryFlag(country)} 
               alt={`Bandeira de ${country.name}`}
               className={styles.countryFlag}
-              onError={(e) => {
-                console.log(`❌ Erro ao carregar bandeira: ${e.target.src}`);
-                // Tenta uma URL alternativa
-                if (!e.target.src.includes('flagcdn.com')) {
-                  e.target.src = `https://flagcdn.com/w320/${country.name?.toLowerCase().substring(0, 2)}.png`;
-                } else {
-                  // Se todas falharam, mostra o emoji
-                  e.target.parentElement.innerHTML = '<div class="' + styles.flagFallback + '">🏳️</div>';
-                }
-              }}
+              onError={(e) => handleFlagError(e, country)}
               onLoad={() => console.log(`✅ Bandeira carregada: ${getCountryFlag(country)}`)}
             />
             <div className={styles.flagInfo}>

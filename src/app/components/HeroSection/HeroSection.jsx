@@ -9,7 +9,7 @@ export default function HeroSection() {
       <p>
         A Coutrips Go foi criada para quem ama viajar e descobrir novos lugares. Aqui você encontra informações sobre países de todos os continentes: cultura, curiosidades, pontos turísticos e muito mais. Seu próximo destino começa por aqui.
       </p>
-      <Link href="/paises" passHref legacyBehavior>
+      <Link href="/paises">
         <button className={styles.exploreBtn}>Explorar Países</button>
       </Link>
     </main>
