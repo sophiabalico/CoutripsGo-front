@@ -76,8 +76,21 @@ export default function PaisDetalhesPage() {
   // Funções de favoritos
   const getFavorites = () => {
     if (typeof window !== 'undefined') {
-      const favorites = localStorage.getItem('favoriteCountries');
-      return favorites ? JSON.parse(favorites) : [];
+      try {
+        const favorites = localStorage.getItem('favoriteCountries');
+        if (!favorites || favorites.trim() === '') {
+          console.log("📝 LocalStorage vazio, retornando array vazio");
+          return [];
+        }
+        const parsed = JSON.parse(favorites);
+        console.log("📝 Favoritos carregados do localStorage:", parsed);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        console.error("❌ Erro ao fazer parse dos favoritos do localStorage:", error);
+        console.log("🧹 Limpando localStorage corrompido...");
+        localStorage.removeItem('favoriteCountries');
+        return [];
+      }
     }
     return [];
   };
@@ -259,50 +272,81 @@ export default function PaisDetalhesPage() {
     return countryName?.toLowerCase() || '';
   };
 
+  // Função para verificar se é uma URL válida de imagem
+  const isValidImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return false;
+    // Verifica se é uma URL válida
+    try {
+      new URL(url);
+      return url.match(/\.(jpeg|jpg|gif|png|svg|webp)$/i) || 
+             url.includes('flagcdn.com') || 
+             url.includes('localhost:5000') ||
+             url.startsWith('/image');
+    } catch {
+      return false;
+    }
+  };
+
   // Função para obter URL da bandeira com fallback hierárquico
   const getCountryFlag = (country) => {
-    console.log(`🏳️ Buscando bandeira para país:`, country);
+    console.log(`🏳️ [DETALHES] Buscando bandeira para país:`, country);
+    console.log(`📊 [DETALHES] Campo flag na API:`, country.flag);
     
-    // Prioridade 1: Bandeira da API
-    if (country.flag) {
-      console.log(`✅ Bandeira da API: ${country.flag}`);
+    // Prioridade 1: Bandeira da API (se for URL válida)
+    if (country.flag && isValidImageUrl(country.flag)) {
+      console.log(`✅ [DETALHES] URL de bandeira válida da API: ${country.flag}`);
       return country.flag;
     }
     
+    // Se flag da API não é URL válida, tenta fallbacks
     const normalizedName = normalizeCountryName(country.name);
     
     // Prioridade 2: Bandeiras do Wikipedia
     const wikipediaFlag = WIKIPEDIA_FLAG_MAPPING[normalizedName];
     if (wikipediaFlag) {
-      console.log(`✅ Bandeira Wikipedia: ${wikipediaFlag}`);
+      console.log(`✅ [DETALHES] Bandeira Wikipedia: ${wikipediaFlag}`);
       return wikipediaFlag;
     }
     
     // Prioridade 3: Bandeiras por código de país
     const countryCode = COUNTRY_CODE_MAPPING[normalizedName];
     if (countryCode) {
-      console.log(`✅ Bandeira por código: ${countryCode}`);
+      console.log(`✅ [DETALHES] Bandeira por código: ${countryCode}`);
       return `https://flagcdn.com/w320/${countryCode}.png`;
     }
     
     // Fallback final
-    console.log(`⚠️ Usando fallback genérico para: ${country.name}`);
+    console.log(`⚠️ [DETALHES] Usando fallback genérico para: ${country.name}`);
     return `https://flagcdn.com/w320/${normalizedName.substring(0, 2)}.png`;
   };
 
   // Função para tratar erros de carregamento de bandeira
   const handleFlagError = (errorEvent, country) => {
-    console.log(`❌ Erro ao carregar bandeira: ${errorEvent.target.src}`);
+    console.log(`❌ [DETALHES] Erro ao carregar bandeira: ${errorEvent.target.src}`);
+    console.log(`📊 [DETALHES] Dados do país para debug:`, country);
     
-    if (!errorEvent.target.src.includes('flagcdn.com')) {
+    const currentSrc = errorEvent.target.src;
+    
+    // Se é uma URL da API que falhou
+    if (currentSrc.includes('localhost:5000') || currentSrc.startsWith('/image')) {
+      console.log(`🔄 [DETALHES] URL da API falhou, tentando flagcdn...`);
       const normalizedName = normalizeCountryName(country.name);
       const countryCode = COUNTRY_CODE_MAPPING[normalizedName] || normalizedName.substring(0, 2);
       
       errorEvent.target.src = `https://flagcdn.com/w320/${countryCode}.png`;
-      console.log(`🔄 Tentando com código: ${countryCode}`);
+      console.log(`🔄 [DETALHES] Tentando com código: ${countryCode}`);
+    } else if (!currentSrc.includes('flagcdn.com')) {
+      const normalizedName = normalizeCountryName(country.name);
+      const countryCode = COUNTRY_CODE_MAPPING[normalizedName] || normalizedName.substring(0, 2);
+      
+      errorEvent.target.src = `https://flagcdn.com/w320/${countryCode}.png`;
+      console.log(`🔄 [DETALHES] Tentando com código: ${countryCode}`);
     } else {
-      // Fallback final: emoji
-      errorEvent.target.parentElement.innerHTML = `<div class="${styles.flagFallback}">🏳️</div>`;
+      // Fallback final: emoji ou texto
+      console.log(`🚫 [DETALHES] Todos os fallbacks falharam, usando emoji/texto`);
+      const flagText = country.flag || '🏳️';
+      errorEvent.target.parentElement.innerHTML = `<div class="${styles.flagFallback}">${flagText}</div>`;
+      console.log(`🎌 [DETALHES] Usando fallback final: ${flagText}`);
     }
   };
 

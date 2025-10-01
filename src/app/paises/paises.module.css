@@ -6,50 +6,171 @@
   padding: clamp(15px, 3vw, 20px);
   position: relative;
   z-index: 2;
+  overflow: visible;
+  min-height: 500px;
 }
 
 .swiper {
   width: 100%;
-  padding-top: clamp(30px, 5vw, 50px);
-  padding-bottom: clamp(30px, 5vw, 50px);
+  padding-top: 80px;
+  padding-bottom: 80px;
   overflow: visible;
 }
 
+/* Remover todas as sombras do Swiper */
 .swiper-slide {
   background-position: center;
   background-size: cover;
-  width: clamp(250px, 25vw, 300px) !important;
-  height: clamp(300px, 35vw, 380px);
+  width: 280px !important;
+  height: 350px !important;
   transition: all 0.3s ease;
+  box-shadow: none !important;
+}
+
+/* Remover sombras dos slides do coverflow */
+.swiper-slide::before,
+.swiper-slide::after {
+  display: none !important;
+}
+
+.swiperSlide {
+  background-position: center;
+  background-size: cover;
+  width: 240px !important;
+  height: 320px !important;
+  transition: all 0.4s ease;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
 }
 
 .swiper-slide-active .card {
-  transform: scale(clamp(1.05, 1.1, 1.15));
-  box-shadow: 0 clamp(15px, 2.5vw, 20px) clamp(30px, 4vw, 40px) rgba(0,0,0,0.5);
-  z-index: 999;
+  transform: scale(1.3) !important;
+  z-index: 999 !important;
+  opacity: 1 !important;
+  filter: brightness(1.1) !important;
+  border: 3px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Card central sem rotação - sempre reto */
+.swiper-slide-active {
+  transform: rotateY(0deg) !important;
+}
+
+/* Cards laterais em segundo plano com inclinação */
+.swiper-slide:not(.swiper-slide-active) .card {
+  opacity: 0.5 !important;
+  transform: scale(0.8) !important;
+  filter: brightness(0.6) grayscale(0.3) !important;
 }
 
 /* Media Queries para Responsividade Adicional */
 @media (max-width: 480px) {
   .carrosselContainer {
-    padding: 10px;
+    padding: 15px;
+    min-height: 450px;
+    overflow: visible;
   }
   
   .swiper {
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    overflow: visible;
   }
   
-  .swiper-slide {
+  .swiperSlide {
+    width: 280px !important;
+    height: 350px !important;
+  }
+  
+  /* Mobile: card central bem destacado e SEM rotação */
+  .swiper-slide-active {
+    transform: rotateY(0deg) !important;
+  }
+  
+  .swiper-slide-active .card {
+    transform: scale(1.2) !important;
+    border: 2px solid rgba(255, 255, 255, 0.4) !important;
+    filter: brightness(1.1) !important;
+  }
+  
+  .swiper-slide:not(.swiper-slide-active) .card {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+    filter: brightness(1) !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+  .carrosselContainer {
+    min-height: 400px;
+    overflow: visible;
+  }
+  
+  .swiper {
+    padding-top: 70px;
+    padding-bottom: 70px;
+  }
+  
+  .swiperSlide {
     width: 220px !important;
-    height: 280px;
+    height: 280px !important;
+  }
+  
+  .swiper-slide-active {
+    transform: rotateY(0deg) !important;
+  }
+  
+  .swiper-slide-active .card {
+    transform: scale(1.25) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    filter: brightness(1.1) !important;
+  }
+  
+  .swiper-slide:not(.swiper-slide-active) .card {
+    opacity: 0.6 !important;
+    transform: scale(0.85) !important;
+    filter: brightness(0.7) grayscale(0.2) !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .carrosselContainer {
+    min-height: 550px;
+    overflow: visible;
+  }
+  
+  .swiper {
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
+  
+  .swiperSlide {
+    width: 200px !important;
+    height: 280px !important;
+  }
+  
+  .swiper-slide-active {
+    transform: rotateY(0deg) !important;
+  }
+  
+  .swiper-slide-active .card {
+    transform: scale(1.35) !important;
+    border: 3px solid rgba(255, 255, 255, 0.4) !important;
+    filter: brightness(1.2) !important;
+  }
+  
+  .swiper-slide:not(.swiper-slide-active) .card {
+    opacity: 0.4 !important;
+    transform: scale(0.75) !important;
+    filter: brightness(0.5) grayscale(0.4) !important;
   }
 }
 
 @media (max-width: 320px) {
-  .swiper-slide {
-    width: 200px !important;
-    height: 260px;
+  .swiper-slide, .swiperSlide {
+    width: 220px !important;
+    height: 280px !important;
   }
 }
 
@@ -58,9 +179,9 @@
     max-width: 1600px;
   }
   
-  .swiper-slide {
+  .swiper-slide, .swiperSlide {
     width: 320px !important;
-    height: 400px;
+    height: 400px !important;
   }
 }
 .section {
@@ -237,21 +358,21 @@
 }
 
 .clearFiltersBtn {
-  padding: 12px 24px;
-  background: linear-gradient(45deg, #007bff, #0056b3);
+  padding: 12px 28px;
+  background: black;
   color: white;
   border: none;
-  border-radius: 25px;
-  font-size: 16px;
+  border-radius: 6px;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  transition: 0.3s;
 }
 
 .clearFiltersBtn:hover {
+  background: #333;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
 /* Responsividade */
@@ -311,27 +432,29 @@
 
 .card {
   position: relative;
-  border-radius: clamp(12px, 2vw, 16px);
+  border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  width: clamp(220px, 25vw, 280px);
-  height: clamp(280px, 32vw, 360px);
-  margin: clamp(5px, 1vw, 10px);
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
   background: rgba(255,255,255,0.05);
-  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .card:hover {
-  transform: translateY(clamp(-6px, -1vw, -8px)) scale(clamp(1.02, 1.04, 1.05));
-  box-shadow: 0 clamp(8px, 1.5vw, 12px) clamp(24px, 4vw, 32px) rgba(0,0,0,0.35);
+  transform: translateY(-12px) scale(1.08);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .card:active {
-  transform: translateY(clamp(-3px, -0.5vw, -4px)) scale(clamp(1.01, 1.02, 1.03));
+  transform: translateY(-6px) scale(1.04);
 }
 
 .card img {
@@ -341,62 +464,54 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
-  border-radius: clamp(12px, 2vw, 16px);
+  transition: transform 0.4s ease;
+  border-radius: 16px;
+  filter: brightness(0.9);
 }
 
 .card:hover img {
-  transform: scale(clamp(1.05, 1.1, 1.15));
+  transform: scale(1.1);
+  filter: brightness(1.1);
 }
 
-/* Responsividade específica para cards */
-@media (max-width: 480px) {
-  .card {
-    width: 200px;
-    height: 260px;
-    margin: 5px;
-    border-radius: 12px;
-  }
-  
-  .card:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-  }
-  
-  .card img {
-    border-radius: 12px;
-  }
-}
-
-@media (max-width: 320px) {
-  .card {
-    width: 180px;
-    height: 240px;
-  }
-}
-
-@media (min-width: 1440px) {
-  .card {
-    width: 300px;
-    height: 380px;
-    margin: 12px;
-  }
-}
+/* Removido media queries específicas dos cards para manter consistência */
 
 .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+  background: linear-gradient(
+    to top, 
+    rgba(0, 0, 0, 0.8) 0%, 
+    rgba(0, 0, 0, 0.3) 50%,
+    transparent 100%
+  );
+  transition: opacity 0.3s ease;
+}
+
+.card:hover .overlay {
+  background: linear-gradient(
+    to top, 
+    rgba(0, 0, 0, 0.9) 0%, 
+    rgba(0, 0, 0, 0.4) 50%,
+    transparent 100%
+  );
 }
 
 .number {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 4rem;
+  top: 15px;
+  right: 15px;
+  font-size: 2.5rem;
   font-weight: bold;
-  color: rgba(255, 255, 255, 0.2);
-  z-index: 2;
+  color: rgba(255, 255, 255, 0.3);
+  z-index: 3;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
+}
+
+.card:hover .number {
+  color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
 }
 
 .countryName {

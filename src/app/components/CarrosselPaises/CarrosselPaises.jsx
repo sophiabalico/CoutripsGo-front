@@ -22,6 +22,8 @@ export default function CarrosselPaises({ countries }) {
     console.log("🖼️ Campo 'image' existe?", countries[0].image ? "SIM" : "NÃO");
     console.log("🏳️ Campo 'flag' existe?", countries[0].flag ? "SIM" : "NÃO");
     console.log("📍 Campo 'name' existe?", countries[0].name ? "SIM" : "NÃO");
+    console.log("🆔 Campo 'id' existe?", countries[0].id ? "SIM" : "NÃO");
+    console.log("📝 Nomes dos países:", countries.map(c => c.name));
   }
 
   // Verificação de segurança
@@ -105,11 +107,12 @@ export default function CarrosselPaises({ countries }) {
   return (
     <div className={styles.carrosselContainer}>
       <Swiper
+        key={`swiper-${countries?.length || 0}-${countries?.map(c => c.id || c.name).join(',').substring(0, 50)}`}
         effect="coverflow"
         grabCursor={true}
         centeredSlides={true}
-        slidesPerView="auto"
-        spaceBetween={30}
+        slidesPerView={3}
+        spaceBetween={0}
         loop={countries && countries.length > 1}
         autoplay={{
           delay: 3000,
@@ -117,106 +120,99 @@ export default function CarrosselPaises({ countries }) {
           pauseOnMouseEnter: true,
         }}
         coverflowEffect={{
-          rotate: 20,
+          rotate: 50,
           stretch: 0,
-          depth: 200,
+          depth: 300,
           modifier: 1,
-          slideShadows: true,
+          slideShadows: false,
         }}
         navigation={{
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
         }}
         breakpoints={{
-          // Mobile - 320px até 479px
+          // Mobile Portrait - 320px até 479px
           320: {
-            slidesPerView: 1,
-            spaceBetween: 15,
-            centeredSlides: true,
+            slidesPerView: 3,
+            spaceBetween: 0,
             coverflowEffect: {
-              rotate: 30,
+              rotate: 60,
               stretch: 0,
-              depth: 100,
+              depth: 200,
               modifier: 1,
-              slideShadows: true,
+              slideShadows: false,
             }
           },
-          // Mobile Large - 480px até 639px
+          // Mobile Landscape - 480px até 639px
           480: {
-            slidesPerView: 1.2,
-            spaceBetween: 20,
-            centeredSlides: true,
+            slidesPerView: 3,
+            spaceBetween: 0,
             coverflowEffect: {
-              rotate: 25,
+              rotate: 55,
               stretch: 0,
-              depth: 150,
+              depth: 250,
               modifier: 1,
-              slideShadows: true,
+              slideShadows: false,
             }
           },
           // Tablet Portrait - 640px até 767px
           640: {
-            slidesPerView: 2,
-            spaceBetween: 25,
-            centeredSlides: true,
+            slidesPerView: 3,
+            spaceBetween: 0,
             coverflowEffect: {
-              rotate: 20,
+              rotate: 50,
               stretch: 0,
-              depth: 180,
+              depth: 280,
               modifier: 1,
-              slideShadows: true,
+              slideShadows: false,
             }
           },
           // Tablet Landscape - 768px até 1023px
           768: {
             slidesPerView: 3,
-            spaceBetween: 30,
-            centeredSlides: true,
+            spaceBetween: 0,
             coverflowEffect: {
-              rotate: 20,
+              rotate: 50,
               stretch: 0,
-              depth: 200,
+              depth: 300,
               modifier: 1,
-              slideShadows: true,
+              slideShadows: false,
             }
           },
           // Desktop Small - 1024px até 1279px
           1024: {
-            slidesPerView: 4,
-            spaceBetween: 35,
-            centeredSlides: true,
+            slidesPerView: 3,
+            spaceBetween: 0,
             coverflowEffect: {
-              rotate: 15,
+              rotate: 45,
               stretch: 0,
-              depth: 220,
+              depth: 320,
               modifier: 1,
-              slideShadows: true,
+              slideShadows: false,
             }
           },
           // Desktop Large - 1280px até 1439px
           1280: {
-            slidesPerView: 5,
-            spaceBetween: 40,
-            centeredSlides: true,
+            slidesPerView: 3,
+            spaceBetween: 0,
             coverflowEffect: {
-              rotate: 15,
+              rotate: 45,
               stretch: 0,
-              depth: 250,
+              depth: 350,
               modifier: 1,
-              slideShadows: true,
+              slideShadows: false,
             }
           },
           // Desktop XL - 1440px+
           1440: {
-            slidesPerView: 6,
-            spaceBetween: 45,
-            centeredSlides: true,
+            slidesPerView: 3,
+            spaceBetween: 0,
             coverflowEffect: {
-              rotate: 10,
+              rotate: 40,
               stretch: 0,
-              depth: 280,
+              depth: 400,
               modifier: 1,
-              slideShadows: true,
+              slideShadows: false,
             }
           }
         }}
@@ -224,32 +220,29 @@ export default function CarrosselPaises({ countries }) {
         className={styles.swiper}
       >
         {countries && countries.length > 0 ? (
-          countries.map((country) => (
-            <SwiperSlide key={country.id} className={styles.swiperSlide}>
-              <div 
-                className={styles.card}
-                onClick={() => handleCountryClick(country)}
-                style={{ cursor: 'pointer' }}
-              >
-                <img 
-                  src={getCountryImage(country)} 
-                  alt={country.name}
-                  onError={handleImageError}
-                  loading="lazy"
-                />
-                <div className={styles.overlay}></div>
-                <div className={styles.cardContent}>
-                  {country.continent && (
-                    <p className={styles.countryContinent}>{country.continent}</p>
-                  )}
-                  {country.region && !country.continent && (
-                    <p className={styles.countryContinent}>{country.region}</p>
-                  )}
-                  <h3 className={styles.countryName}>{country.name}</h3>
+          countries.map((country, index) => {
+            console.log(`🎴 Renderizando card ${index + 1}: ${country.name} (ID: ${country.id})`);
+            return (
+              <SwiperSlide key={country.id || index} className={styles.swiperSlide}>
+                <div 
+                  className={styles.card}
+                  onClick={() => handleCountryClick(country)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <img 
+                    src={getCountryImage(country)} 
+                    alt={`Paisagem de ${country.name}`}
+                    onError={handleImageError}
+                    loading="lazy"
+                  />
+                  <div className={styles.overlay}></div>
+                  <div className={styles.cardContent}>
+                    <h3 className={styles.countryName}>{country.name}</h3>
+                  </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          ))
+              </SwiperSlide>
+            );
+          })
         ) : (
           <div>Nenhum país encontrado</div>
         )}

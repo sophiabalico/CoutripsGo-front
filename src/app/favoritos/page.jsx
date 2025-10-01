@@ -10,6 +10,95 @@ export default function FavoritosPage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // Função para verificar se é uma URL válida de imagem
+  const isValidImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return false;
+    // Verifica se é uma URL válida
+    try {
+      new URL(url);
+      return url.match(/\.(jpeg|jpg|gif|png|svg|webp)$/i) || 
+             url.includes('flagcdn.com') || 
+             url.includes('localhost:5000') ||
+             url.startsWith('/image');
+    } catch {
+      return false;
+    }
+  };
+
+  // Função para renderizar a bandeira do país
+  const renderCountryFlag = (country) => {
+    console.log(`🏁 [FAVORITOS] Renderizando bandeira para: ${country.name}`, country.flag);
+    
+    // Se o flag é uma URL válida de imagem, renderiza como img
+    if (isValidImageUrl(country.flag)) {
+      console.log(`🖼️ [FAVORITOS] Flag é URL válida: ${country.flag}`);
+      return (
+        <img 
+          src={country.flag} 
+          alt={`Bandeira de ${country.name}`}
+          className={styles.flagIcon}
+          onError={(e) => {
+            console.log(`❌ [FAVORITOS] Erro ao carregar bandeira: ${e.target.src}`);
+            
+            // Tenta fallback com flagcdn.com
+            if (!e.target.src.includes('flagcdn.com')) {
+              const countryCode = getCountryCode(country.name);
+              e.target.src = `https://flagcdn.com/w320/${countryCode}.png`;
+              console.log(`🔄 [FAVORITOS] Tentando fallback: ${e.target.src}`);
+            } else {
+              // Se fallback também falhou, remove a imagem e mostra emoji
+              e.target.style.display = 'none';
+              const fallbackDiv = document.createElement('div');
+              fallbackDiv.className = styles.flagIcon;
+              fallbackDiv.textContent = getCountryEmoji(country.name);
+              e.target.parentNode.insertBefore(fallbackDiv, e.target);
+              console.log(`🚫 [FAVORITOS] Usando emoji fallback: ${getCountryEmoji(country.name)}`);
+            }
+          }}
+          onLoad={() => {
+            console.log(`✅ [FAVORITOS] Bandeira carregada com sucesso: ${country.flag}`);
+          }}
+        />
+      );
+    } else {
+      // Se não é URL, trata como emoji ou texto
+      console.log(`🔤 [FAVORITOS] Flag é emoji/texto: ${country.flag}`);
+      return (
+        <div className={styles.flagIcon}>
+          {country.flag || getCountryEmoji(country.name)}
+        </div>
+      );
+    }
+  };
+
+  // Função para obter código do país (simplificado)
+  const getCountryCode = (countryName) => {
+    const codes = {
+      'Estados Unidos': 'us',
+      'United States': 'us',
+      'USA': 'us',
+      'França': 'fr',
+      'France': 'fr',
+      'Brasil': 'br',
+      'Brazil': 'br',
+    };
+    return codes[countryName] || countryName.toLowerCase().substring(0, 2);
+  };
+
+  // Função para obter emoji do país
+  const getCountryEmoji = (countryName) => {
+    const emojis = {
+      'Estados Unidos': '🇺🇸',
+      'United States': '🇺🇸',
+      'USA': '🇺🇸',
+      'França': '🇫🇷',
+      'France': '🇫🇷',
+      'Brasil': '🇧🇷',
+      'Brazil': '🇧🇷',
+    };
+    return emojis[countryName] || '🏳️';
+  };
+
   // Função para obter a URL da imagem do país
   const getCountryImage = (country) => {
     console.log(`🔍 Buscando imagem para país:`, country); // Debug
@@ -72,8 +161,21 @@ export default function FavoritosPage() {
   // Função para obter favoritos do localStorage
   const getFavorites = () => {
     if (typeof window !== 'undefined') {
-      const favorites = localStorage.getItem('favoriteCountries');
-      return favorites ? JSON.parse(favorites) : [];
+      try {
+        const favorites = localStorage.getItem('favoriteCountries');
+        if (!favorites || favorites.trim() === '') {
+          console.log("📝 LocalStorage de favoritos vazio, retornando array vazio");
+          return [];
+        }
+        const parsed = JSON.parse(favorites);
+        console.log("📝 Favoritos carregados do localStorage:", parsed);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        console.error("❌ Erro ao fazer parse dos favoritos do localStorage:", error);
+        console.log("🧹 Limpando localStorage de favoritos corrompido...");
+        localStorage.removeItem('favoriteCountries');
+        return [];
+      }
     }
     return [];
   };
@@ -154,13 +256,7 @@ export default function FavoritosPage() {
               
               <div className={styles.cardContent}>
                 <div className={styles.flagSection}>
-                  {country.flag && (
-                    <img 
-                      src={country.flag} 
-                      alt={`Bandeira de ${country.name}`}
-                      className={styles.flagIcon}
-                    />
-                  )}
+                  {renderCountryFlag(country)}
                   <div className={styles.countryInfo}>
                     <h3 className={styles.countryName}>{country.name}</h3>
                     <p className={styles.countryLocation}>

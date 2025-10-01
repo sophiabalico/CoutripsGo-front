@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from 'axios';
 import styles from "./paises.module.css";
 import CarrosselPaises from "../components/CarrosselPaises/CarrosselPaises";
@@ -9,18 +9,71 @@ export default function PaisesPage() {
   const [countries, setCountries] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedContinent, setSelectedContinent] = useState("all");
   const [sortOption, setSortOption] = useState("original");
+  const [selectedContinent, setSelectedContinent] = useState("all");
+  const [availableContinents, setAvailableContinents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const carrosselRef = useRef(null);
+
+  // Função para extrair continentes únicos do backend
+  const extractUniqueContinents = (countries) => {
+    const continentsSet = new Set();
+    
+    countries.forEach(country => {
+      // Usa o campo location como fonte principal de continente
+      const location = country.location;
+      if (location && typeof location === 'string' && location.trim() !== '') {
+        continentsSet.add(location.trim());
+      }
+      
+      // Fallback para outros campos se location não estiver disponível
+      if (!location) {
+        if (country.continent) continentsSet.add(country.continent);
+        else if (country.region) continentsSet.add(country.region);
+        else if (country.subregion) continentsSet.add(country.subregion);
+      }
+    });
+    
+    const continentsArray = Array.from(continentsSet).sort();
+    console.log("🌍 Continentes extraídos do backend:", continentsArray);
+    return continentsArray;
+  };
 
   const fetchCountries = async () => {
     try {
       console.log("🌍 Iniciando busca de países na página Paises...");
-      const response = await axios.get("http://localhost:5000/country");
+      
+      // Verificar se a API está respondendo
+      const response = await axios.get("http://localhost:5000/country", {
+        timeout: 10000, // 10 segundos de timeout
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
       console.log("📡 Resposta da API (Paises):", response);
+      console.log("📡 Status da resposta:", response.status);
+      console.log("📡 Headers da resposta:", response.headers);
+      console.log("📡 Tipo de dados recebidos:", typeof response.data);
+      console.log("📡 Conteúdo bruto:", response.data);
+      
+      // Verificar se recebemos dados válidos
+      if (!response.data) {
+        console.error("❌ Resposta vazia da API");
+        setError('API retornou dados vazios');
+        return;
+      }
+      
+      if (typeof response.data === 'string') {
+        console.error("❌ API retornou string em vez de JSON:", response.data);
+        setError('API retornou formato inválido (string)');
+        return;
+      }
+      
       console.log("🌍 Dados da API recebidos:", response.data?.length || 0, "países");
       console.log("📊 Estrutura do primeiro país:", response.data?.[0]);
+      console.log("📝 Lista completa de países:", response.data.map(c => c.name).sort());
       
       if (!Array.isArray(response.data)) {
         console.error("❌ Dados não são um array (Paises):", response.data);
@@ -58,22 +111,44 @@ export default function PaisesPage() {
       const validCountries = response.data.filter(country => country.name);
       console.log("✅ Países válidos após filtro:", validCountries.length);
       
+      // Extrair continentes únicos do backend
+      const continents = extractUniqueContinents(validCountries);
+      setAvailableContinents(continents);
+      
       setCountries(validCountries);
       setFilteredCountries(validCountries);
       setError(null);
       console.log("✅ Países carregados com sucesso na página Paises!");
     } catch (error) {
       console.error("❌ Erro ao carregar países:", error);
-      console.error("🔍 Detalhes do erro:", error.response?.data || error.message);
-      setError(`Erro ao carregar países: ${error.message}`);
+      console.error("🔍 Tipo do erro:", error.constructor.name);
+      console.error("🔍 Mensagem:", error.message);
+      console.error("🔍 Stack:", error.stack);
+      
+      if (error.response) {
+        console.error("🔍 Resposta do servidor:", error.response.status, error.response.statusText);
+        console.error("🔍 Dados da resposta:", error.response.data);
+        console.error("🔍 Headers da resposta:", error.response.headers);
+      } else if (error.request) {
+        console.error("🔍 Requisição não obteve resposta:", error.request);
+      }
+      
+      // Verificar se é erro de JSON
+      if (error.message.includes('JSON') || error.message.includes('parse')) {
+        setError(`Erro de formato de dados da API: ${error.message}`);
+      } else if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
+        setError('Não foi possível conectar com o servidor. Verifique se o backend está funcionando.');
+      } else {
+        setError(`Erro ao carregar países: ${error.message}`);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   // Função para filtrar e ordenar países
-  const filterAndSortCountries = (countries, query, continent, sort) => {
-    console.log("🔍 Filtrando:", { query, continent, totalCountries: countries.length });
+  const filterAndSortCountries = (countries, query, sort, continent) => {
+    console.log("🔍 Filtrando:", { query, sort, continent, totalCountries: countries.length });
     
     // Primeiro filtrar por texto de pesquisa
     let filtered = countries.filter(country => 
@@ -82,94 +157,143 @@ export default function PaisesPage() {
 
     console.log("📝 Após filtro de pesquisa:", filtered.length);
 
-    // Depois filtrar por continente
-    if (continent !== "all") {
-      console.log("🌍 === INICIANDO FILTRO DE CONTINENTE ===");
-      console.log("🎯 Continente selecionado:", continent);
-      
-      // Mapear continentes para facilitar correspondência
-      const continentMapping = {
-        "áfrica": ["africa", "áfrica", "african"],
-        "ásia": ["asia", "ásia", "asian"],
-        "europa": ["europe", "europa", "european"],
-        "américa do norte": ["north america", "américa do norte", "northern america", "norte"],
-        "américa do sul": ["south america", "américa do sul", "latin america", "sul", "south", "america"],
-        "oceania": ["oceania", "australia", "polynesia", "melanesia", "oceanic"]
-      };
-      
-      const selectedMapping = continentMapping[continent.toLowerCase()] || [continent.toLowerCase()];
-      console.log("🔍 Palavras-chave para busca:", selectedMapping);
-      
-      const beforeFilter = filtered.length;
-      console.log("📊 Países antes do filtro:", beforeFilter);
+    // Filtrar por continente se não for "all" e se a ordenação for "continent"
+    if (sort === "continent" && continent !== "all") {
+      console.log("🌍 Aplicando filtro de continente:", continent);
       
       filtered = filtered.filter(country => {
-        const countryContinent = (country.continent || "").toLowerCase();
-        const countryRegion = (country.region || "").toLowerCase();
-        const countrySubregion = (country.subregion || "").toLowerCase();
+        // Usa principalmente o campo location
+        const countryLocation = (country.location || "").toLowerCase().trim();
+        const selectedContinentLower = continent.toLowerCase().trim();
         
-        // Verificar se algum dos campos corresponde ao filtro
-        const matchContinent = selectedMapping.some(mapping => 
-          countryContinent.includes(mapping) || mapping.includes(countryContinent)
-        );
-        const matchRegion = selectedMapping.some(mapping => 
-          countryRegion.includes(mapping) || mapping.includes(countryRegion)
-        );
-        const matchSubregion = selectedMapping.some(mapping => 
-          countrySubregion.includes(mapping) || mapping.includes(countrySubregion)
-        );
+        // Verifica correspondência exata ou parcial
+        const locationMatch = countryLocation === selectedContinentLower || 
+                             countryLocation.includes(selectedContinentLower) ||
+                             selectedContinentLower.includes(countryLocation);
         
-        const finalMatch = matchContinent || matchRegion || matchSubregion;
+        // Fallback para outros campos se location não bater
+        if (!locationMatch && countryLocation === "") {
+          const countryContinent = (country.continent || "").toLowerCase().trim();
+          const countryRegion = (country.region || "").toLowerCase().trim();
+          const countrySubregion = (country.subregion || "").toLowerCase().trim();
+          
+          return countryContinent.includes(selectedContinentLower) ||
+                 countryRegion.includes(selectedContinentLower) ||
+                 countrySubregion.includes(selectedContinentLower) ||
+                 selectedContinentLower.includes(countryContinent) ||
+                 selectedContinentLower.includes(countryRegion) ||
+                 selectedContinentLower.includes(countrySubregion);
+        }
         
-        return finalMatch;
+        console.log(`País: ${country.name}, Location: "${countryLocation}", Match: ${locationMatch}`);
+        return locationMatch;
       });
       
-      console.log(`📊 Resultado do filtro "${continent}": ${beforeFilter} → ${filtered.length} países`);
-      console.log("📋 Países que passaram:", filtered.map(c => c.name));
+      console.log(`🌍 Após filtro de continente "${continent}": ${filtered.length} países`);
+      console.log("📋 Países filtrados:", filtered.map(c => `${c.name} (${c.location || c.continent || c.region || 'N/A'})`));
     }
 
     // Ordenação
     if (sort === "name") {
-      filtered = [...filtered].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+      // Log antes da ordenação
+      console.log("🔍 Países antes da ordenação A-Z:", filtered.map(c => c.name));
+      
+      filtered = [...filtered].sort((a, b) => {
+        const nameA = (a.name || "").toLowerCase().trim();
+        const nameB = (b.name || "").toLowerCase().trim();
+        return nameA.localeCompare(nameB, 'pt-BR', { 
+          numeric: true, 
+          sensitivity: 'base' 
+        });
+      });
+      
+      console.log("📊 Primeiros 10 países ordenados A-Z:", filtered.slice(0, 10).map(c => c.name));
+      console.log("🎯 Primeiro país (A-Z):", filtered[0]?.name);
     } else if (sort === "name-desc") {
-      filtered = [...filtered].sort((a, b) => (b.name || "").localeCompare(a.name || ""));
+      filtered = [...filtered].sort((a, b) => {
+        const nameA = (a.name || "").toLowerCase().trim();
+        const nameB = (b.name || "").toLowerCase().trim();
+        return nameB.localeCompare(nameA, 'pt-BR', { 
+          numeric: true, 
+          sensitivity: 'base' 
+        });
+      });
+      console.log("📊 Primeiros 10 países ordenados Z-A:", filtered.slice(0, 10).map(c => c.name));
+      console.log("🎯 Primeiro país (Z-A):", filtered[0]?.name);
     } else if (sort === "continent") {
       filtered = [...filtered].sort((a, b) => {
         const aCont = a.continent || a.region || a.subregion || "";
         const bCont = b.continent || b.region || b.subregion || "";
-        return aCont.localeCompare(bCont);
+        const continentCompare = aCont.localeCompare(bCont);
+        
+        // Se forem do mesmo continente, ordena por nome
+        if (continentCompare === 0) {
+          return (a.name || "").localeCompare(b.name || "");
+        }
+        
+        return continentCompare;
       });
+      console.log("📊 Primeiros 10 países ordenados por continente:", filtered.slice(0, 10).map(c => `${c.name} (${c.continent || c.region || c.subregion || 'N/A'})`));
+    } else {
+      console.log("📊 Ordem original mantida");
     }
+    // Se for "original", mantém a ordem original (não faz nada)
 
     return filtered;
   };
 
   // Atualizar países filtrados quando houver mudanças
   useEffect(() => {
-    const filtered = filterAndSortCountries(countries, searchQuery, selectedContinent, sortOption);
+    const filtered = filterAndSortCountries(countries, searchQuery, sortOption, selectedContinent);
     setFilteredCountries(filtered);
-  }, [countries, searchQuery, selectedContinent, sortOption]);
+  }, [countries, searchQuery, sortOption, selectedContinent]);
 
-  // Função para obter continentes únicos adicionais da API
-  const getUniqueontinents = () => {
-    if (countries.length === 0) {
-      return [];
+  // Rolar para o primeiro país quando qualquer filtro mudar
+  useEffect(() => {
+    if (filteredCountries.length > 0) {
+      // Aguarda um pouco para garantir que o carrossel foi renderizado
+      setTimeout(() => {
+        console.log(`🎯 Iniciando scroll para filtro: ${sortOption}`);
+        
+        // Prioridade 1: Usar a ref do carrossel
+        if (carrosselRef.current) {
+          carrosselRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          });
+          console.log(`✅ Scroll realizado via ref para filtro: ${sortOption}`);
+          return;
+        }
+        
+        // Prioridade 2: Usar o ID específico
+        const carouselById = document.getElementById('countries-carousel');
+        if (carouselById) {
+          carouselById.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          });
+          console.log(`✅ Scroll realizado via ID para filtro: ${sortOption}`);
+          return;
+        }
+        
+        // Prioridade 3: Usar o atributo data
+        const carouselByData = document.querySelector('[data-countries="carrossel"]');
+        if (carouselByData) {
+          carouselByData.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          });
+          console.log(`✅ Scroll realizado via data-attribute para filtro: ${sortOption}`);
+          return;
+        }
+        
+        console.log(`❌ Nenhum elemento encontrado para scroll do filtro: ${sortOption}`);
+      }, 500); // Timeout maior para garantir renderização completa
     }
-
-    // Continentes que já estão na lista padrão
-    const defaultContinents = ["África", "Ásia", "Europa", "América do Norte", "América do Sul", "Oceania"];
-
-    // Obter continentes únicos dos dados da API que não estão na lista padrão
-    const apiContinents = countries
-      .map(country => {
-        return country.continent || country.region || country.subregion || null;
-      })
-      .filter(continent => continent && continent.trim() !== "")
-      .filter(continent => !defaultContinents.includes(continent))
-      .filter((continent, index, arr) => arr.indexOf(continent) === index);
-
-    return apiContinents.sort();
-  };
+  }, [sortOption, selectedContinent]); // Dispara quando o filtro de ordenação OU continente mudar
 
   useEffect(() => {
     fetchCountries();
@@ -200,44 +324,43 @@ export default function PaisesPage() {
 
           {/* Filtros */}
           <div className={styles.filtersContainer}>
-            {/* Filtro por Continente */}
-            <div className={styles.filterGroup}>
-              <select
-                value={selectedContinent}
-                onChange={(e) => setSelectedContinent(e.target.value)}
-                className={styles.select}
-              >
-                <option value="all">Todos os Continentes</option>
-                <option value="África">África</option>
-                <option value="Ásia">Ásia</option>
-                <option value="Europa">Europa</option>
-                <option value="América do Norte">América do Norte</option>
-                <option value="América do Sul">América do Sul</option>
-                <option value="Oceania">Oceania</option>
-                {getUniqueontinents().map(continent => {
-                  // Evitar duplicatas da lista padrão
-                  const defaultContinents = ["África", "Ásia", "Europa", "América do Norte", "América do Sul", "Oceania"];
-                  if (defaultContinents.includes(continent)) return null;
-                  return (
-                    <option key={continent} value={continent}>{continent}</option>
-                  );
-                })}
-              </select>
-            </div>
-
-            {/* Filtro de Ordenação */}
+            {/* Filtro de Ordenação Consolidado */}
             <div className={styles.filterGroup}>
               <select
                 value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}
+                onChange={(e) => {
+                  setSortOption(e.target.value);
+                  // Reset do filtro de continente quando mudar para outras opções
+                  if (e.target.value !== "continent") {
+                    setSelectedContinent("all");
+                  }
+                }}
                 className={styles.select}
               >
-                <option value="original">Ordem Original</option>
                 <option value="name">Nome (A-Z)</option>
                 <option value="name-desc">Nome (Z-A)</option>
+                <option value="original">Ordem Original</option>
                 <option value="continent">Por Continente</option>
               </select>
             </div>
+
+            {/* Filtro de Continente - só aparece quando "Por Continente" está selecionado */}
+            {sortOption === "continent" && (
+              <div className={styles.filterGroup}>
+                <select
+                  value={selectedContinent}
+                  onChange={(e) => setSelectedContinent(e.target.value)}
+                  className={styles.select}
+                >
+                  <option value="all">Todos os Continentes</option>
+                  {availableContinents.map(continent => (
+                    <option key={continent} value={continent}>
+                      {continent}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </div>
 
@@ -252,15 +375,17 @@ export default function PaisesPage() {
           {error}
         </div>
       ) : filteredCountries.length > 0 ? (
-        <CarrosselPaises countries={filteredCountries} />
+        <div ref={carrosselRef} data-countries="carrossel" id="countries-carousel">
+          <CarrosselPaises countries={filteredCountries} />
+        </div>
       ) : countries.length > 0 ? (
         <div className={styles.noResults}>
           <p>Nenhum país encontrado com os filtros selecionados (total: {countries.length}).</p>
           <button 
             onClick={() => {
               setSearchQuery("");
-              setSelectedContinent("all");
               setSortOption("original");
+              setSelectedContinent("all");
             }}
             className={styles.clearFiltersBtn}
           >
