@@ -3,17 +3,30 @@
   width: 100%;
   max-width: 1200px;
   margin: 40px auto;
-  padding: 0 40px;
+  padding: 0 80px; /* Ainda mais padding lateral */
   position: relative;
   z-index: 2;
-  overflow: hidden; /* Evita scroll horizontal */
+  overflow-x: hidden; /* Evita extravaso horizontal */
+  overflow-y: visible; /* Permite crescimento vertical dos cards */
 }
+
+/* Remover pseudo-elemento desnecessário */
 
 .swiper {
   width: 100%;
-  padding: 40px 0;
-  overflow: hidden; /* Evita scroll horizontal */
+  padding: 100px 80px; /* Muito mais espaço */
+  overflow-x: hidden !important; /* Controla horizontal */
+  overflow-y: visible !important; /* Permite vertical */
   position: relative;
+}
+
+/* Permitir crescimento vertical dos slides */
+.swiper :global(.swiper-wrapper) {
+  overflow-y: visible !important;
+}
+
+.swiper :global(.swiper-slide) {
+  overflow: visible !important;
 }
 
 /* Estilos das setas de navegação */
@@ -52,6 +65,7 @@
   justify-content: center;
   align-items: center;
   width: auto !important;
+  padding: 25px; /* Mais espaço interno */
 }
 
 .card {
@@ -59,15 +73,17 @@
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  width: 280px;
-  height: 350px;
+  width: 240px; /* Reduzido de 280px */
+  height: 300px; /* Reduzido de 350px */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
   margin: 0 auto;
 }
 
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-5px) scale(1.01); /* Crescimento muito sutil */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  z-index: 10;
 }
 
 .card img {
@@ -108,14 +124,22 @@
 /* Responsividade */
 @media (max-width: 768px) {
   .carrosselContainer {
-    padding: 0 25px;
+    padding: 0 60px; /* Mais espaço lateral */
     margin: 30px auto;
     max-width: 100%;
   }
   
+  .swiper {
+    padding: 80px 50px; /* Espaço generoso para tablet */
+  }
+  
+  .swiperSlide {
+    padding: 20px; /* Mais espaço interno */
+  }
+  
   .card {
-    width: 250px;
-    height: 300px;
+    width: 210px; /* Reduzido de 250px */
+    height: 270px; /* Reduzido de 300px */
   }
   
   .countryName {
@@ -137,13 +161,21 @@
 
 @media (max-width: 480px) {
   .carrosselContainer {
-    padding: 0 20px;
+    padding: 0 40px; /* Espaço adequado para mobile */
     margin: 20px auto;
   }
   
+  .swiper {
+    padding: 70px 30px; /* Espaço suficiente para mobile */
+  }
+  
+  .swiperSlide {
+    padding: 15px; /* Espaço interno para mobile */
+  }
+  
   .card {
-    width: 220px;
-    height: 280px;
+    width: 180px; /* Reduzido de 220px */
+    height: 230px; /* Reduzido de 280px */
   }
   
   .countryName {
@@ -175,19 +207,19 @@
 @media (max-width: 480px) {
   .carrosselContainer {
     padding: 15px;
-    min-height: 450px;
+    min-height: 500px; /* Mais espaço para hover */
     overflow: visible;
   }
   
   .swiper {
-    padding-top: 60px;
-    padding-bottom: 60px;
+    padding-top: 70px; /* Mais espaço superior */
+    padding-bottom: 70px; /* Mais espaço inferior */
     overflow: visible;
   }
   
   .swiperSlide {
-    width: 280px !important;
-    height: 350px !important;
+    width: 240px !important; /* Reduzido de 280px */
+    height: 300px !important; /* Reduzido de 350px */
   }
   
   /* Mobile: card central bem destacado e SEM rotação */
@@ -210,13 +242,13 @@
 
 @media (min-width: 481px) and (max-width: 767px) {
   .carrosselContainer {
-    min-height: 400px;
+    min-height: 450px; /* Mais espaço para hover */
     overflow: visible;
   }
   
   .swiper {
-    padding-top: 70px;
-    padding-bottom: 70px;
+    padding-top: 80px; /* Mais espaço para cards crescerem */
+    padding-bottom: 80px;
   }
   
   .swiperSlide {
@@ -243,13 +275,13 @@
 
 @media (min-width: 1280px) {
   .carrosselContainer {
-    min-height: 550px;
+    min-height: 600px; /* Mais espaço para hover */
     overflow: visible;
   }
   
   .swiper {
-    padding-top: 100px;
-    padding-bottom: 100px;
+    padding-top: 120px; /* Mais espaço para cards crescerem */
+    padding-bottom: 120px;
   }
   
   .swiperSlide {
@@ -276,8 +308,8 @@
 
 @media (max-width: 320px) {
   .swiper-slide, .swiperSlide {
-    width: 220px !important;
-    height: 280px !important;
+    width: 160px !important; /* Reduzido de 220px */
+    height: 200px !important; /* Reduzido de 280px */
   }
 }
 
@@ -287,8 +319,8 @@
   }
   
   .swiper-slide, .swiperSlide {
-    width: 320px !important;
-    height: 400px !important;
+    width: 280px !important; /* Reduzido de 320px */
+    height: 350px !important; /* Reduzido de 400px */
   }
 }
 .section {
@@ -305,6 +337,8 @@
   background-position: center;
   background-repeat: no-repeat;
   position: relative;
+  overflow-x: hidden; /* Evita extravaso horizontal */
+  overflow-y: visible; /* Permite crescimento vertical */
 }
 
 .overlay {

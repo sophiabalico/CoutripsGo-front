@@ -107,6 +107,8 @@ export default function CarrosselPaises({ countries }) {
       <Swiper
         slidesPerView={1}
         spaceBetween={20}
+        loop={true}
+        loopAdditionalSlides={2}
         pagination={{ clickable: true }}
         navigation={{
           nextEl: ".swiper-button-next",
