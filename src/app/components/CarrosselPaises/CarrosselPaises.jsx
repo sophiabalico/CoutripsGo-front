@@ -1,11 +1,9 @@
 
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
 import { useRouter } from "next/navigation";
 import "swiper/css";
-import "swiper/css/effect-coverflow";
 import "swiper/css/navigation";
-import "swiper/css/autoplay";
-import { EffectCoverflow, Navigation, Autoplay } from "swiper/modules";
 import styles from "../../paises/paises.module.css";
 
 export default function CarrosselPaises({ countries }) {
@@ -107,117 +105,25 @@ export default function CarrosselPaises({ countries }) {
   return (
     <div className={styles.carrosselContainer}>
       <Swiper
-        key={`swiper-${countries?.length || 0}-${countries?.map(c => c.id || c.name).join(',').substring(0, 50)}`}
-        effect="coverflow"
-        grabCursor={true}
-        centeredSlides={true}
-        slidesPerView={3}
-        spaceBetween={0}
-        loop={countries && countries.length > 1}
-        autoplay={{
-          delay: 3000,
-          disableOnInteraction: false,
-          pauseOnMouseEnter: true,
-        }}
-        coverflowEffect={{
-          rotate: 50,
-          stretch: 0,
-          depth: 300,
-          modifier: 1,
-          slideShadows: false,
-        }}
+        slidesPerView={1}
+        spaceBetween={20}
+        pagination={{ clickable: true }}
         navigation={{
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
         }}
+        modules={[Navigation]}
+        className={styles.swiper}
         breakpoints={{
-          // Mobile Portrait - 320px até 479px
-          320: {
-            slidesPerView: 3,
-            spaceBetween: 0,
-            coverflowEffect: {
-              rotate: 60,
-              stretch: 0,
-              depth: 200,
-              modifier: 1,
-              slideShadows: false,
-            }
-          },
-          // Mobile Landscape - 480px até 639px
-          480: {
-            slidesPerView: 3,
-            spaceBetween: 0,
-            coverflowEffect: {
-              rotate: 55,
-              stretch: 0,
-              depth: 250,
-              modifier: 1,
-              slideShadows: false,
-            }
-          },
-          // Tablet Portrait - 640px até 767px
           640: {
-            slidesPerView: 3,
-            spaceBetween: 0,
-            coverflowEffect: {
-              rotate: 50,
-              stretch: 0,
-              depth: 280,
-              modifier: 1,
-              slideShadows: false,
-            }
+            slidesPerView: 2,
+            spaceBetween: 20,
           },
-          // Tablet Landscape - 768px até 1023px
           768: {
             slidesPerView: 3,
-            spaceBetween: 0,
-            coverflowEffect: {
-              rotate: 50,
-              stretch: 0,
-              depth: 300,
-              modifier: 1,
-              slideShadows: false,
-            }
+            spaceBetween: 30,
           },
-          // Desktop Small - 1024px até 1279px
-          1024: {
-            slidesPerView: 3,
-            spaceBetween: 0,
-            coverflowEffect: {
-              rotate: 45,
-              stretch: 0,
-              depth: 320,
-              modifier: 1,
-              slideShadows: false,
-            }
-          },
-          // Desktop Large - 1280px até 1439px
-          1280: {
-            slidesPerView: 3,
-            spaceBetween: 0,
-            coverflowEffect: {
-              rotate: 45,
-              stretch: 0,
-              depth: 350,
-              modifier: 1,
-              slideShadows: false,
-            }
-          },
-          // Desktop XL - 1440px+
-          1440: {
-            slidesPerView: 3,
-            spaceBetween: 0,
-            coverflowEffect: {
-              rotate: 40,
-              stretch: 0,
-              depth: 400,
-              modifier: 1,
-              slideShadows: false,
-            }
-          }
         }}
-        modules={[EffectCoverflow, Navigation, Autoplay]}
-        className={styles.swiper}
       >
         {countries && countries.length > 0 ? (
           countries.map((country, index) => {
@@ -247,23 +153,9 @@ export default function CarrosselPaises({ countries }) {
           <div>Nenhum país encontrado</div>
         )}
         
-        {/* Navegação responsiva */}
-        <div className="swiper-button-prev" style={{
-          color: '#26658c', 
-          fontSize: 'clamp(1.5rem, 2.5vw, 2.5rem)', 
-          left: 'clamp(5px, 2vw, 20px)',
-          width: 'clamp(40px, 6vw, 60px)',
-          height: 'clamp(40px, 6vw, 60px)',
-          marginTop: 'clamp(-20px, -3vw, -30px)'
-        }}></div>
-        <div className="swiper-button-next" style={{
-          color: '#26658c', 
-          fontSize: 'clamp(1.5rem, 2.5vw, 2.5rem)', 
-          right: 'clamp(5px, 2vw, 20px)',
-          width: 'clamp(40px, 6vw, 60px)',
-          height: 'clamp(40px, 6vw, 60px)',
-          marginTop: 'clamp(-20px, -3vw, -30px)'
-        }}></div>
+        {/* Setas de navegação */}
+        <div className="swiper-button-prev"></div>
+        <div className="swiper-button-next"></div>
       </Swiper>
     </div>
   );

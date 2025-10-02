@@ -1,67 +1,174 @@
-/* Carrossel de países - Responsivo */
+/* Carrossel de países - Simples e Responsivo */
 .carrosselContainer {
   width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: clamp(15px, 3vw, 20px);
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 40px;
   position: relative;
   z-index: 2;
-  overflow: visible;
-  min-height: 500px;
+  overflow: hidden; /* Evita scroll horizontal */
 }
 
 .swiper {
   width: 100%;
-  padding-top: 80px;
-  padding-bottom: 80px;
-  overflow: visible;
+  padding: 40px 0;
+  overflow: hidden; /* Evita scroll horizontal */
+  position: relative;
 }
 
-/* Remover todas as sombras do Swiper */
-.swiper-slide {
-  background-position: center;
-  background-size: cover;
-  width: 280px !important;
-  height: 350px !important;
+/* Estilos das setas de navegação */
+.swiper :global(.swiper-button-next),
+.swiper :global(.swiper-button-prev) {
+  color: white !important;
+  background: transparent;
+  width: 50px !important;
+  height: 50px !important;
   transition: all 0.3s ease;
-  box-shadow: none !important;
+  z-index: 10;
 }
 
-/* Remover sombras dos slides do coverflow */
-.swiper-slide::before,
-.swiper-slide::after {
-  display: none !important;
+.swiper :global(.swiper-button-next):hover,
+.swiper :global(.swiper-button-prev):hover {
+  color: #26658c !important;
+  transform: scale(1.2);
+}
+
+.swiper :global(.swiper-button-next):after,
+.swiper :global(.swiper-button-prev):after {
+  font-size: 20px !important;
+  font-weight: bold;
+}
+
+.swiper :global(.swiper-button-next) {
+  right: 10px;
+}
+
+.swiper :global(.swiper-button-prev) {
+  left: 10px;
 }
 
 .swiperSlide {
-  background-position: center;
-  background-size: cover;
-  width: 240px !important;
-  height: 320px !important;
-  transition: all 0.4s ease;
-  display: flex !important;
+  display: flex;
   justify-content: center;
   align-items: center;
+  width: auto !important;
 }
 
-.swiper-slide-active .card {
-  transform: scale(1.3) !important;
-  z-index: 999 !important;
-  opacity: 1 !important;
-  filter: brightness(1.1) !important;
-  border: 3px solid rgba(255, 255, 255, 0.3) !important;
+.card {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  width: 280px;
+  height: 350px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  margin: 0 auto;
 }
 
-/* Card central sem rotação - sempre reto */
-.swiper-slide-active {
-  transform: rotateY(0deg) !important;
+.card:hover {
+  transform: translateY(-5px);
 }
 
-/* Cards laterais em segundo plano com inclinação */
-.swiper-slide:not(.swiper-slide-active) .card {
-  opacity: 0.5 !important;
-  transform: scale(0.8) !important;
-  filter: brightness(0.6) grayscale(0.3) !important;
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top, 
+    rgba(0, 0, 0, 0.7) 0%, 
+    rgba(0, 0, 0, 0.2) 50%,
+    transparent 100%
+  );
+}
+
+.cardContent {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  text-align: center;
+  width: 90%;
+}
+
+.countryName {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .carrosselContainer {
+    padding: 0 25px;
+    margin: 30px auto;
+    max-width: 100%;
+  }
+  
+  .card {
+    width: 250px;
+    height: 300px;
+  }
+  
+  .countryName {
+    font-size: 1rem;
+  }
+  
+  /* Setas menores em tablet */
+  .swiper :global(.swiper-button-next),
+  .swiper :global(.swiper-button-prev) {
+    width: 45px !important;
+    height: 45px !important;
+  }
+  
+  .swiper :global(.swiper-button-next):after,
+  .swiper :global(.swiper-button-prev):after {
+    font-size: 18px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .carrosselContainer {
+    padding: 0 20px;
+    margin: 20px auto;
+  }
+  
+  .card {
+    width: 220px;
+    height: 280px;
+  }
+  
+  .countryName {
+    font-size: 0.9rem;
+  }
+  
+  /* Setas ainda menores em mobile */
+  .swiper :global(.swiper-button-next),
+  .swiper :global(.swiper-button-prev) {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  .swiper :global(.swiper-button-next):after,
+  .swiper :global(.swiper-button-prev):after {
+    font-size: 16px !important;
+  }
+  
+  .swiper :global(.swiper-button-next) {
+    right: 5px;
+  }
+
+  .swiper :global(.swiper-button-prev) {
+    left: 5px;
+  }
 }
 
 /* Media Queries para Responsividade Adicional */
