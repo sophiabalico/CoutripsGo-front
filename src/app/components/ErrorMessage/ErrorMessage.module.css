@@ -1,0 +1,14 @@
+.errorContainer {
+  color: #ff6b6b;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 8px;
+  margin: 2rem auto;
+  max-width: 600px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
