@@ -2,22 +2,28 @@
 .carrosselContainer {
   width: 100%;
   max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 80px; /* Ainda mais padding lateral */
+  margin: -10px auto 40px auto;
+  padding: 0 80px;
   position: relative;
   z-index: 2;
   overflow-x: hidden; /* Evita extravaso horizontal */
   overflow-y: visible; /* Permite crescimento vertical dos cards */
+  min-height: 400px; /* Altura mínima garantida */
+  display: block; /* Força exibição */
+  visibility: visible; /* Garante visibilidade */
 }
 
 /* Remover pseudo-elemento desnecessário */
 
 .swiper {
   width: 100%;
-  padding: 100px 80px; /* Muito mais espaço */
+  padding: 100px 80px;
   overflow-x: hidden !important; /* Controla horizontal */
   overflow-y: visible !important; /* Permite vertical */
   position: relative;
+  display: block !important; /* Força exibição */
+  visibility: visible !important; /* Garante visibilidade */
+  min-height: 300px; /* Altura mínima */
 }
 
 /* Permitir crescimento vertical dos slides */
@@ -61,23 +67,33 @@
 }
 
 .swiperSlide {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
   width: auto !important;
-  padding: 25px; /* Mais espaço interno */
+  min-width: clamp(180px, 25vw, 280px) !important;
+  max-width: clamp(200px, 30vw, 320px) !important;
+  flex-shrink: 0 !important;
+  padding: clamp(8px, 2vw, 25px) !important;
+  box-sizing: border-box !important;
 }
 
 .card {
   position: relative;
-  border-radius: 12px;
+  border: none !important;
+  border-radius: clamp(8px, 1.5vw, 15px);
   overflow: hidden;
   cursor: pointer;
-  width: 240px; /* Reduzido de 280px */
-  height: 300px; /* Reduzido de 350px */
+  width: clamp(160px, 22vw, 280px) !important;
+  height: clamp(200px, 28vw, 350px) !important;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   margin: 0 auto;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: transparent !important;
+  outline: none !important;
 }
 
 .card:hover {
@@ -90,6 +106,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border: none !important;
+  outline: none !important;
+  border-radius: inherit;
+  display: block;
+  background: transparent !important;
 }
 
 .overlay {
@@ -101,6 +122,9 @@
     rgba(0, 0, 0, 0.2) 50%,
     transparent 100%
   );
+  border: none !important;
+  outline: none !important;
+  border-radius: inherit;
 }
 
 .cardContent {
@@ -125,12 +149,12 @@
 @media (max-width: 768px) {
   .carrosselContainer {
     padding: 0 60px; /* Mais espaço lateral */
-    margin: 30px auto;
+    margin: -5px auto 30px auto;
     max-width: 100%;
   }
   
   .swiper {
-    padding: 80px 50px; /* Espaço generoso para tablet */
+    padding: 20px 50px; /* Espaço reduzido para tablet */
   }
   
   .swiperSlide {
@@ -162,11 +186,11 @@
 @media (max-width: 480px) {
   .carrosselContainer {
     padding: 0 40px; /* Espaço adequado para mobile */
-    margin: 20px auto;
+    margin: -10px auto 20px auto;
   }
   
   .swiper {
-    padding: 70px 30px; /* Espaço suficiente para mobile */
+    padding: 15px 30px; /* Espaço mínimo para mobile */
   }
   
   .swiperSlide {
@@ -204,6 +228,51 @@
 }
 
 /* Media Queries para Responsividade Adicional */
+@media (max-width: 320px) {
+  .carrosselContainer {
+    padding: 0 20px; /* Menos padding para telas muito pequenas */
+    margin: 15px auto;
+  }
+  
+  .swiper {
+    padding: 60px 20px; /* Espaço reduzido mas suficiente */
+  }
+  
+  .swiperSlide {
+    padding: 10px; /* Espaço mínimo */
+  }
+  
+  .card {
+    width: 160px; /* Menor para telas pequenas */
+    height: 200px;
+  }
+  
+  .countryName {
+    font-size: 0.8rem;
+  }
+  
+  /* Setas muito pequenas */
+  .swiper :global(.swiper-button-next),
+  .swiper :global(.swiper-button-prev) {
+    width: 35px !important;
+    height: 35px !important;
+  }
+  
+  .swiper :global(.swiper-button-next):after,
+  .swiper :global(.swiper-button-prev):after {
+    font-size: 14px !important;
+  }
+  
+  .swiper :global(.swiper-button-next) {
+    right: 2px;
+  }
+
+  .swiper :global(.swiper-button-prev) {
+    left: 2px;
+  }
+}
+
+/* Media Query para Mobile Adicional */
 @media (max-width: 480px) {
   .carrosselContainer {
     padding: 15px;
@@ -229,7 +298,7 @@
   
   .swiper-slide-active .card {
     transform: scale(1.2) !important;
-    border: 2px solid rgba(255, 255, 255, 0.4) !important;
+    border: none !important;
     filter: brightness(1.1) !important;
   }
   
@@ -262,7 +331,7 @@
   
   .swiper-slide-active .card {
     transform: scale(1.25) !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border: none !important;
     filter: brightness(1.1) !important;
   }
   
@@ -295,7 +364,7 @@
   
   .swiper-slide-active .card {
     transform: scale(1.35) !important;
-    border: 3px solid rgba(255, 255, 255, 0.4) !important;
+    border: none !important;
     filter: brightness(1.2) !important;
   }
   
@@ -330,7 +399,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 40px 20px;
+  padding: 120px 20px 40px; /* Adicionado padding-top para o Header */
   text-align: center;
   background-image: url("/image/fundo-de-tela.png");
   background-size: cover;
@@ -722,5 +791,279 @@
   .countryContinent {
     font-size: 0.65rem;
     padding: 2px 6px;
+  }
+}
+
+/* Media Query para Telas Grandes (Desktop) */
+@media (min-width: 1200px) {
+  .carrosselContainer {
+    max-width: 1400px;
+    padding: 0 100px; /* Mais espaço lateral em telas grandes */
+  }
+  
+  .swiper {
+    padding: 120px 100px; /* Espaço generoso */
+  }
+  
+  .card {
+    width: 260px; /* Maior em telas grandes */
+    height: 320px;
+  }
+  
+  .countryName {
+    font-size: 1.1rem;
+  }
+  
+  /* Setas maiores para telas grandes */
+  .swiper :global(.swiper-button-next),
+  .swiper :global(.swiper-button-prev) {
+    width: 55px !important;
+    height: 55px !important;
+  }
+  
+  .swiper :global(.swiper-button-next):after,
+  .swiper :global(.swiper-button-prev):after {
+    font-size: 22px !important;
+  }
+}
+
+/* CSS RESPONSIVO UNIVERSAL - SOBRESCREVE TODAS AS CONFIGURAÇÕES */
+
+/* REMOVER TODAS AS BORDAS DOS CARDS DO CARROSSEL */
+.card,
+.swiper-slide .card,
+.swiper-slide-active .card,
+.swiper-slide:not(.swiper-slide-active) .card,
+.swiperSlide .card,
+.card img,
+.swiper-slide .card img,
+.swiper-slide-active .card img,
+.swiper-slide:not(.swiper-slide-active) .card img,
+.swiperSlide .card img {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+}
+
+/* Garantir que imagens preencham completamente */
+.card img,
+.swiper-slide .card img {
+  border-radius: inherit !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* Eliminar bordas brancas nas pontas - regra específica */
+.card::before,
+.card::after,
+.card *::before,
+.card *::after {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+}
+
+/* Garantir que o card não tenha background branco em nenhuma condição */
+.card {
+  box-sizing: border-box !important;
+}
+
+.card, 
+.card * {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.carrosselContainer {
+  padding: clamp(10px, 5vw, 80px) !important;
+  margin: clamp(-15px, -1vw, -5px) auto clamp(15px, 3vw, 40px) auto !important;
+  min-height: clamp(250px, 40vw, 500px) !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+.swiper {
+  padding: clamp(10px, 2vw, 30px) clamp(30px, 6vw, 80px) !important;
+  min-height: clamp(200px, 35vw, 400px) !important;
+  width: 100% !important;
+  overflow: visible !important;
+}
+
+.swiperSlide {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: auto !important;
+  min-width: clamp(160px, 20vw, 250px) !important;
+  max-width: clamp(180px, 25vw, 300px) !important;
+  flex-shrink: 0 !important;
+  padding: clamp(5px, 1.5vw, 20px) !important;
+  box-sizing: border-box !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.card {
+  position: relative !important;
+  border-radius: clamp(6px, 1vw, 12px) !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  width: clamp(140px, 18vw, 240px) !important;
+  height: clamp(180px, 24vw, 300px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.3s ease !important;
+  margin: 0 auto !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: #fff !important;
+}
+
+.countryName {
+  color: #fff !important;
+  font-size: clamp(0.75rem, 2vw, 1.2rem) !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8) !important;
+  text-align: center !important;
+}
+
+/* Setas de navegação totalmente responsivas */
+.swiper :global(.swiper-button-next),
+.swiper :global(.swiper-button-prev) {
+  width: clamp(35px, 5vw, 60px) !important;
+  height: clamp(35px, 5vw, 60px) !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-radius: 50% !important;
+  color: #333 !important;
+  margin-top: calc(clamp(35px, 5vw, 60px) / -2) !important;
+}
+
+.swiper :global(.swiper-button-next):after,
+.swiper :global(.swiper-button-prev):after {
+  font-size: clamp(14px, 2.5vw, 24px) !important;
+  font-weight: bold !important;
+}
+
+.swiper :global(.swiper-button-next) {
+  right: clamp(5px, 2vw, 20px) !important;
+}
+
+.swiper :global(.swiper-button-prev) {
+  left: clamp(5px, 2vw, 20px) !important;
+}
+
+/* Classe para esconder navegação quando filtrando por continente */
+.swiperNoNavigation :global(.swiper-button-next),
+.swiperNoNavigation :global(.swiper-button-prev) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Responsividade Específica para Telas Divididas */
+@media (min-width: 500px) and (max-width: 700px) {
+  .carrosselContainer {
+    padding: 0 40px !important;
+    margin: -10px auto !important;
+    min-height: 350px !important;
+  }
+  
+  .swiper {
+    padding: 20px 40px !important;
+    min-height: 280px !important;
+  }
+  
+  .swiperSlide {
+    padding: 18px !important;
+    min-width: 220px !important;
+    max-width: 220px !important;
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  .card {
+    width: 200px !important;
+    height: 250px !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .countryName {
+    font-size: 0.95rem !important;
+  }
+  
+  /* Garantir que as setas apareçam APENAS quando showNavigation=true */
+  .swiper:not(.swiperNoNavigation) :global(.swiper-button-next),
+  .swiper:not(.swiperNoNavigation) :global(.swiper-button-prev) {
+    width: 42px !important;
+    height: 42px !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Garantir que as setas ficam escondidas quando showNavigation=false */
+  .swiperNoNavigation :global(.swiper-button-next),
+  .swiperNoNavigation :global(.swiper-button-prev) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+}
+
+@media (min-width: 700px) and (max-width: 900px) {
+  .carrosselContainer {
+    padding: 0 50px !important;
+    margin: -10px auto !important;
+    min-height: 380px !important;
+  }
+  
+  .swiper {
+    padding: 20px 50px !important;
+    min-height: 300px !important;
+  }
+  
+  .swiperSlide {
+    padding: 20px !important;
+    min-width: 240px !important;
+    max-width: 240px !important;
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  .card {
+    width: 220px !important;
+    height: 280px !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .countryName {
+    font-size: 1rem !important;
+  }
+  
+  /* Garantir que as setas apareçam APENAS quando showNavigation=true */
+  .swiper:not(.swiperNoNavigation) :global(.swiper-button-next),
+  .swiper:not(.swiperNoNavigation) :global(.swiper-button-prev) {
+    width: 44px !important;
+    height: 44px !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Garantir que as setas ficam escondidas quando showNavigation=false */
+  .swiperNoNavigation :global(.swiper-button-next),
+  .swiperNoNavigation :global(.swiper-button-prev) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
   }
 }

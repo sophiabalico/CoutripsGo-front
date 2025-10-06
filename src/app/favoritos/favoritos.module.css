@@ -6,7 +6,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 40px 20px;
+  padding: 120px 20px 40px; /* Adicionado padding-top para o Header */
   text-align: center;
   background-image: url("/image/fundo-de-tela.png");
   background-size: cover;
@@ -21,9 +21,10 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
   z-index: 1;
+  pointer-events: none; /* Permite cliques passarem através do overlay */
 }
 
-/* Garantir que elementos apareçam acima do overlay */
+/* Garantir que elementos apareçam acima do overlay mas abaixo do Header */
 .container > * {
   position: relative;
   z-index: 2;
@@ -32,7 +33,7 @@
 /* Header */
 .header {
   text-align: center;
-  margin-top: 80px;
+  margin-top: 0; /* Removido para evitar espaço duplo com padding-top do container */
   margin-bottom: 60px;
   animation: fadeInUp 0.8s ease-out;
 }
@@ -94,58 +95,7 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Estado vazio */
-.emptyState {
-  text-align: center;
-  padding: 80px 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  max-width: 500px;
-  margin: 0 auto;
-  animation: fadeInUp 0.8s ease-out 0.4s both;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-.emptyIcon {
-  font-size: 4rem;
-  margin-bottom: 20px;
-}
-
-.emptyState h2 {
-  font-size: 2rem;
-  color: white;
-  margin-bottom: 15px;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-
-.emptyState p {
-  font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 30px;
-  line-height: 1.6;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.exploreButton {
-  margin-top: 20px;
-  padding: 12px 28px;
-  border: none;
-  border-radius: 6px;
-  background: black;
-  color: white;
-  cursor: pointer;
-  font-weight: 500;
-  transition: 0.3s;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 1.1rem;
-}
-
-.exploreButton:hover {
-  background: #333;
-}
+/* Estilos removidos - agora estão no componente EmptyFavorites */
 
 /* Grid de favoritos */
 .favoritesGrid {
@@ -158,124 +108,7 @@
   animation: fadeInUp 0.8s ease-out 0.6s both;
 }
 
-/* Card de favorito */
-.favoriteCard {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  overflow: hidden;
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
-  position: relative;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-.favoriteCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-/* Imagem do card */
-.cardImage {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-}
-
-.cardImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.favoriteCard:hover .cardImage img {
-  transform: scale(1.05);
-}
-
-.removeButton {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: rgba(0, 0, 0, 0.7);
-  border: none;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
-  backdrop-filter: blur(5px);
-}
-
-.removeButton:hover {
-  background: rgba(231, 76, 60, 0.9);
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
-}
-
-/* Conteúdo do card */
-.cardContent {
-  padding: 25px;
-}
-
-.flagSection {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.flagIcon {
-  width: 40px;
-  height: 30px;
-  object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.countryInfo {
-  flex: 1;
-}
-
-.countryName {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: white;
-  margin: 0 0 5px 0;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-
-.countryLocation {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.detailsButton {
-  width: 100%;
-  margin-top: 20px;
-  padding: 12px 28px;
-  border: none;
-  border-radius: 6px;
-  background: black;
-  color: white;
-  cursor: pointer;
-  font-weight: 500;
-  transition: 0.3s;
-  font-size: 1rem;
-}
-
-.detailsButton:hover {
-  background: #333;
-}
+/* Estilos removidos - agora est\u00e3o no componente FavoriteCard */
 
 /* Responsividade */
 @media (max-width: 768px) {
@@ -296,23 +129,6 @@
     gap: 20px;
     padding: 0 10px;
   }
-  
-  .favoriteCard {
-    margin: 0;
-  }
-  
-  .emptyState {
-    padding: 60px 20px;
-    margin: 0 20px;
-  }
-  
-  .emptyState h2 {
-    font-size: 1.8rem;
-  }
-  
-  .emptyState p {
-    font-size: 1.1rem;
-  }
 }
 
 @media (max-width: 480px) {
@@ -331,25 +147,5 @@
   
   .subtitle {
     font-size: 1rem;
-  }
-  
-  .cardContent {
-    padding: 20px;
-  }
-  
-  .countryName {
-    font-size: 1.3rem;
-  }
-  
-  .emptyState {
-    padding: 40px 15px;
-  }
-  
-  .emptyIcon {
-    font-size: 3rem;
-  }
-  
-  .emptyState h2 {
-    font-size: 1.5rem;
   }
 }

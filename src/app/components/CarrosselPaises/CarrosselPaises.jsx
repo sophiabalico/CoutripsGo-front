@@ -1,4 +1,5 @@
 
+import React, { useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { useRouter } from "next/navigation";
@@ -6,8 +7,26 @@ import "swiper/css";
 import "swiper/css/navigation";
 import styles from "../../paises/paises.module.css";
 
-export default function CarrosselPaises({ countries }) {
+export default function CarrosselPaises({ countries, showNavigation = true }) {
   const router = useRouter();
+  const swiperRef = useRef(null);
+  
+  // Hook para forçar atualização do Swiper quando a janela redimensionar
+  useEffect(() => {
+    const handleResize = () => {
+      if (swiperRef.current && swiperRef.current.swiper) {
+        const swiper = swiperRef.current.swiper;
+        if (typeof swiper.update === 'function' && !swiper.destroyed) {
+          setTimeout(() => {
+            swiper.update();
+          }, 100);
+        }
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   console.log("🎠 CarrosselPaises iniciado");
   console.log("📊 Countries recebidos:", countries);
   console.log("📈 Quantidade de países:", countries ? countries.length : 0);
@@ -105,25 +124,120 @@ export default function CarrosselPaises({ countries }) {
   return (
     <div className={styles.carrosselContainer}>
       <Swiper
-        slidesPerView={1}
-        spaceBetween={20}
-        loop={true}
-        loopAdditionalSlides={2}
-        pagination={{ clickable: true }}
-        navigation={{
+        ref={swiperRef}
+        slidesPerView="auto"
+        spaceBetween={15}
+        loop={false}
+        centeredSlides={false}
+        navigation={showNavigation ? {
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
+        } : false}
+        modules={showNavigation ? [Navigation] : []}
+        className={`${styles.swiper} ${!showNavigation ? styles.swiperNoNavigation : ''}`}
+        onSwiper={(swiper) => {
+          // Configuração inicial segura
+          setTimeout(() => {
+            if (swiper && typeof swiper.update === 'function' && !swiper.destroyed) {
+              swiper.update();
+            }
+          }, 100);
         }}
-        modules={[Navigation]}
-        className={styles.swiper}
+        onResize={(swiper) => {
+          // Atualização segura no redimensionamento
+          if (swiper && typeof swiper.update === 'function' && !swiper.destroyed) {
+            swiper.update();
+          }
+        }}
+        watchSlidesProgress={true}
+        updateOnWindowResize={true}
         breakpoints={{
-          640: {
+          // Mobile muito pequeno (até 320px)
+          280: {
+            slidesPerView: 1,
+            spaceBetween: 8,
+            centeredSlides: true,
+          },
+          // Mobile pequeno (até 480px)
+          320: {
+            slidesPerView: 1.1,
+            spaceBetween: 10,
+            centeredSlides: false,
+          },
+          // Mobile médio
+          400: {
+            slidesPerView: 1.3,
+            spaceBetween: 12,
+          },
+          // Mobile grande / Tela dividida muito pequena
+          480: {
+            slidesPerView: 1.5,
+            spaceBetween: 14,
+          },
+          // Tela dividida pequena
+          550: {
+            slidesPerView: 1.7,
+            spaceBetween: 16,
+          },
+          // Tela dividida média
+          620: {
             slidesPerView: 2,
+            spaceBetween: 18,
+          },
+          // Tablet pequeno / Tela dividida grande
+          720: {
+            slidesPerView: 2.3,
             spaceBetween: 20,
           },
-          768: {
-            slidesPerView: 3,
+          // Tablet médio
+          820: {
+            slidesPerView: 2.6,
+            spaceBetween: 22,
+          },
+          // Tablet grande
+          920: {
+            slidesPerView: 2.9,
+            spaceBetween: 24,
+          },
+          // Desktop muito pequeno
+          1020: {
+            slidesPerView: 3.2,
+            spaceBetween: 26,
+          },
+          // Desktop pequeno
+          1120: {
+            slidesPerView: 3.5,
+            spaceBetween: 28,
+          },
+          // Desktop médio
+          1220: {
+            slidesPerView: 3.8,
             spaceBetween: 30,
+          },
+          // Desktop grande
+          1320: {
+            slidesPerView: 4,
+            spaceBetween: 30,
+          },
+          // Desktop muito grande
+          1420: {
+            slidesPerView: 4.3,
+            spaceBetween: 32,
+          },
+          // Tela ultra-wide
+          1520: {
+            slidesPerView: 4.6,
+            spaceBetween: 34,
+          },
+          // 2K Resolution
+          1620: {
+            slidesPerView: 5,
+            spaceBetween: 36,
+          },
+          // 4K Resolution
+          1920: {
+            slidesPerView: 6,
+            spaceBetween: 40,
           },
         }}
       >

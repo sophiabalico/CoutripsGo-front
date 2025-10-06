@@ -376,7 +376,10 @@ export default function PaisesPage() {
         </div>
       ) : filteredCountries.length > 0 ? (
         <div ref={carrosselRef} data-countries="carrossel" id="countries-carousel">
-          <CarrosselPaises countries={filteredCountries} />
+          <CarrosselPaises 
+            countries={filteredCountries} 
+            showNavigation={selectedContinent === "all"}
+          />
         </div>
       ) : countries.length > 0 ? (
         <div className={styles.noResults}>

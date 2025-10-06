@@ -19,7 +19,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 1000;
+  z-index: 9999; /* Aumentado para ficar acima de todos os outros elementos */
   background: transparent;
   transition: all 0.3s ease;
 }
@@ -29,7 +29,7 @@
   font-size: clamp(1.2rem, 3vw, 1.5rem);
   font-weight: bold;
   text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  z-index: 1001;
+  z-index: 10000; /* Garantir que o logo apareça */
 }
 
 /* Desktop Navigation */
