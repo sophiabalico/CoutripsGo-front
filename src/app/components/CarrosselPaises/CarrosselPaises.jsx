@@ -27,25 +27,13 @@ export default function CarrosselPaises({ countries, showNavigation = true }) {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  console.log("🎠 CarrosselPaises iniciado");
-  console.log("📊 Countries recebidos:", countries);
-  console.log("📈 Quantidade de países:", countries ? countries.length : 0);
-  console.log("🔍 Tipo da prop countries:", typeof countries);
-  console.log("📋 É array?", Array.isArray(countries));
   
   // Log da estrutura do primeiro país para debug
   if (countries && countries.length > 0) {
-    console.log("🔍 Estrutura do primeiro país:", countries[0]);
-    console.log("🖼️ Campo 'image' existe?", countries[0].image ? "SIM" : "NÃO");
-    console.log("🏳️ Campo 'flag' existe?", countries[0].flag ? "SIM" : "NÃO");
-    console.log("📍 Campo 'name' existe?", countries[0].name ? "SIM" : "NÃO");
-    console.log("🆔 Campo 'id' existe?", countries[0].id ? "SIM" : "NÃO");
-    console.log("📝 Nomes dos países:", countries.map(c => c.name));
   }
 
   // Verificação de segurança
   if (!countries || countries.length === 0) {
-    console.log("⚠️ Nenhum país para exibir no carrossel (total:", countries?.length || 0, ")");
     return (
       <div className={styles.carrosselContainer}>
         <div style={{ color: 'white', textAlign: 'center', padding: '20px' }}>
@@ -269,9 +257,13 @@ export default function CarrosselPaises({ countries, showNavigation = true }) {
           <div>Nenhum país encontrado</div>
         )}
         
-        {/* Setas de navegação */}
-        <div className="swiper-button-prev"></div>
-        <div className="swiper-button-next"></div>
+        {/* Setas de navegação - só aparecem quando showNavigation é true */}
+        {showNavigation && (
+          <>
+            <div className="swiper-button-prev"></div>
+            <div className="swiper-button-next"></div>
+          </>
+        )}
       </Swiper>
     </div>
   );

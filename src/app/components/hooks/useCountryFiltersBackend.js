@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 
 export function useCountryFiltersBackend(countries, availableContinents) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -6,20 +6,50 @@ export function useCountryFiltersBackend(countries, availableContinents) {
   const [selectedContinent, setSelectedContinent] = useState("all");
   const [filteredCountries, setFilteredCountries] = useState([]);
 
-  // Função para filtrar e ordenar países
-  const filterAndSortCountries = (countries, query, sort, continent) => {
-    console.log("🔍 Filtrando:", { query, sort, continent, totalCountries: countries.length });
-    
-    // Primeiro filtrar por texto de pesquisa
-    let filtered = countries.filter(country => 
-      country.name && country.name.toLowerCase().startsWith(query.toLowerCase())
-    );
+  // Função para normalizar texto (remover acentos, espaços extras, etc.)
+  const normalizeText = (text) => {
+    if (!text) return "";
+    return text
+      .toLowerCase()
+      .normalize('NFD')                           // Decompor caracteres acentuados
+      .replace(/[\u0300-\u036f]/g, '')           // Remover marcas diacríticas (acentos)
+      .replace(/[^a-z0-9\s]/g, '')               // Remover caracteres especiais
+      .replace(/\s+/g, ' ')                      // Normalizar espaços
+      .trim();
+  };
 
-    console.log("📝 Após filtro de pesquisa:", filtered.length);
+  // Função para filtrar e ordenar países
+  const filterAndSortCountries = useCallback((countries, query, sort, continent) => {
+    // Função para verificar se o país corresponde à busca
+    const matchesSearchQuery = (country, query) => {
+      if (!query || query.trim() === "") return true;
+      
+      const normalizedQuery = normalizeText(query);
+      const normalizedName = normalizeText(country.name);
+      
+      // Se a busca for apenas uma letra, só retorna países que COMEÇAM com essa letra
+      if (normalizedQuery.length === 1) {
+        return normalizedName.startsWith(normalizedQuery);
+      }
+      
+      // Para buscas com mais de uma letra, mantém a busca inteligente
+      // Busca por:
+      // 1. Início do nome (prioridade)
+      // 2. Nome completo (inclui busca parcial)
+      // 3. Palavras individuais do nome
+      return normalizedName.startsWith(normalizedQuery) ||
+             normalizedName.includes(normalizedQuery) ||
+             normalizedName.split(' ').some(word => 
+               word.startsWith(normalizedQuery) || 
+               word.includes(normalizedQuery)
+             );
+    };
+    
+    // Primeiro filtrar por texto de pesquisa com busca inteligente
+    let filtered = countries.filter(country => matchesSearchQuery(country, query));
 
     // Filtrar por continente se não for "all" e se a ordenação for "continent"
     if (sort === "continent" && continent !== "all") {
-      console.log("🌍 Aplicando filtro de continente:", continent);
       
       filtered = filtered.filter(country => {
         // Usa principalmente o campo location
@@ -100,13 +130,13 @@ export function useCountryFiltersBackend(countries, availableContinents) {
     // Se for "original", mantém a ordem original (não faz nada)
 
     return filtered;
-  };
+  }, []);
 
   // Atualizar países filtrados quando houver mudanças
   useEffect(() => {
     const filtered = filterAndSortCountries(countries, searchQuery, sortOption, selectedContinent);
     setFilteredCountries(filtered);
-  }, [countries, searchQuery, sortOption, selectedContinent]);
+  }, [countries, searchQuery, sortOption, selectedContinent, filterAndSortCountries]);
 
   const clearFilters = () => {
     setSearchQuery("");

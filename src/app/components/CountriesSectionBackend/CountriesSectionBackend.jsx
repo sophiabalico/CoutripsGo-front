@@ -9,8 +9,6 @@ export default function CountriesSectionBackend({ countries, showNavigation, sor
     if (countries.length > 0) {
       // Aguarda um pouco para garantir que o carrossel foi renderizado
       setTimeout(() => {
-        console.log(`🎯 Iniciando scroll para filtro: ${sortOption}`);
-        
         // Prioridade 1: Usar a ref do carrossel
         if (carrosselRef.current) {
           carrosselRef.current.scrollIntoView({ 
@@ -18,7 +16,6 @@ export default function CountriesSectionBackend({ countries, showNavigation, sor
             block: 'start',
             inline: 'nearest'
           });
-          console.log(`✅ Scroll realizado via ref para filtro: ${sortOption}`);
           return;
         }
         
@@ -30,7 +27,6 @@ export default function CountriesSectionBackend({ countries, showNavigation, sor
             block: 'start',
             inline: 'nearest'
           });
-          console.log(`✅ Scroll realizado via ID para filtro: ${sortOption}`);
           return;
         }
         
@@ -42,12 +38,10 @@ export default function CountriesSectionBackend({ countries, showNavigation, sor
             block: 'start',
             inline: 'nearest'
           });
-          console.log(`✅ Scroll realizado via data-attribute para filtro: ${sortOption}`);
           return;
         }
         
-        console.log(`❌ Nenhum elemento encontrado para scroll do filtro: ${sortOption}`);
-      }, 500); // Timeout maior para garantir renderização completa
+        }, 500); // Timeout maior para garantir renderização completa
     }
   }, [sortOption, selectedContinent, countries.length]); // Dispara quando o filtro de ordenação OU continente mudar
 

@@ -36,7 +36,7 @@ export default function PaisesPage() {
       return (
         <CountriesSectionBackend 
           countries={filteredCountries} 
-          showNavigation={selectedContinent === "all"}
+          showNavigation={selectedContinent === "all" && !searchQuery.trim()}
           sortOption={sortOption}
           selectedContinent={selectedContinent}
         />

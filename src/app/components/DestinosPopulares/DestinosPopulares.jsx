@@ -13,13 +13,9 @@ export default function DestinosPopulares() {
 
   const fetchCountries = async () => {
     try {
-      console.log("🚀 Iniciando busca de países para destinos populares...");
       setError(null);
       
       const response = await axios.get("http://localhost:5000/country");
-      console.log("🌍 Resposta da API recebida:", response);
-      console.log("📊 Status da resposta:", response.status);
-      console.log("📊 Dados da API recebidos para destinos populares:", response.data?.length || 0, "países");
       
       if (!response.data || !Array.isArray(response.data)) {
         throw new Error("API não retornou um array de países");
@@ -27,8 +23,7 @@ export default function DestinosPopulares() {
       
       // Pegar apenas os primeiros 5 países válidos
       const validCountries = response.data.filter(country => country && country.name).slice(0, 5);
-      console.log("✅ 5 países selecionados:", validCountries.map(c => c.name));
-      console.log("📋 Dados completos dos países:", validCountries);
+
       
       setCountries(validCountries);
     } catch (error) {
@@ -43,23 +38,23 @@ export default function DestinosPopulares() {
 
   // Função para obter a URL da imagem do país
   const getCountryImage = (country) => {
-    console.log(`🔍 Buscando imagem para país:`, country); // Debug
+    
     
     // Se o país já tem uma URL de imagem da API, usa ela diretamente
     if (country.image) {
-      console.log(`✅ Imagem encontrada na API: ${country.image}`); // Debug
+      
       return country.image;
     }
     
     // Se tem um campo imageUrl
     if (country.imageUrl) {
-      console.log(`✅ ImageUrl encontrada na API: ${country.imageUrl}`); // Debug
+      
       return country.imageUrl;
     }
     
     // Se tem um campo photo
     if (country.photo) {
-      console.log(`✅ Photo encontrada na API: ${country.photo}`); // Debug
+      
       return country.photo;
     }
     
@@ -73,14 +68,14 @@ export default function DestinosPopulares() {
     
     // Constrói a URL baseada no padrão do seu backend
     const imageUrl = `http://localhost:5000/public/image/${normalizedName}.png`;
-    console.log(`🌐 URL construída: ${imageUrl}`); // Debug
+    
     
     return imageUrl;
   };
 
   // Função para lidar com erro de carregamento de imagem
   const handleImageError = (e) => {
-    console.log(`❌ Erro ao carregar: ${e.target.src}`); // Debug
+    
     
     const currentSrc = e.target.src;
     
@@ -88,21 +83,17 @@ export default function DestinosPopulares() {
     if (currentSrc.includes('/public/image/')) {
       // Tenta sem o 'public'
       e.target.src = currentSrc.replace('/public/image/', '/image/');
-      console.log(`🔄 Tentando sem 'public': ${e.target.src}`);
-    } else if (currentSrc.includes('/image/') && !currentSrc.includes('/images/')) {
+      } else if (currentSrc.includes('/image/') && !currentSrc.includes('/images/')) {
       // Tenta com 'images' plural
       e.target.src = currentSrc.replace('/image/', '/images/');
-      console.log(`🔄 Tentando 'images' plural: ${e.target.src}`);
-    } else {
+      } else {
       // Fallback final
       e.target.src = "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop";
-      console.log(`🚫 Usando fallback externo`);
-    }
+      }
   };
 
   // Função para navegar para a página de detalhes do país
   const handleCountryClick = (country) => {
-    console.log(`🔗 Navegando para detalhes do país:`, country);
     const countryId = country.id || country._id || country.name.toLowerCase().replace(/\s+/g, '-');
     router.push(`/paises/${countryId}`);
   };
@@ -112,7 +103,6 @@ export default function DestinosPopulares() {
   }, []);
 
   if (loading) {
-    console.log("⏳ Estado de loading ativo...");
     return (
       <section className={styles.destinations}>
         <h3>Destinos Populares</h3>
@@ -122,10 +112,6 @@ export default function DestinosPopulares() {
       </section>
     );
   }
-
-  console.log("🎯 Renderizando destinos populares com:", countries.length, "países");
-  console.log("📋 Lista de países:", countries);
-  console.log("❌ Erro atual:", error);
 
   if (error) {
     return (
@@ -150,7 +136,7 @@ export default function DestinosPopulares() {
           </div>
         ) : (
           countries.map((country) => {
-            console.log("🗂️ Renderizando card para:", country.name);
+
             return (
               <div 
                 key={country.id || country._id || country.name} 
