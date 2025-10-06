@@ -1,17 +1,12 @@
 "use client";
-import { useState } from "react";
 import styles from "./Header.module.css";
+import HamburgerButton from "../HamburgerButton/HamburgerButton";
+import MobileNavigation from "../MobileNavigation/MobileNavigation";
+import MenuOverlay from "../MenuOverlay/MenuOverlay";
+import { useMobileMenu } from "../hooks/useMobileMenu";
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
+  const { isMenuOpen, toggleMenu, closeMenu } = useMobileMenu();
 
   return (
     <header className={styles.navbar}>
@@ -27,32 +22,13 @@ export default function Header() {
       </nav>
 
       {/* Mobile Menu Button */}
-      <button 
-        className={styles.menuToggle}
-        onClick={toggleMenu}
-        aria-label="Toggle menu"
-      >
-        <span className={`${styles.hamburger} ${isMenuOpen ? styles.hamburgerOpen : ''}`}></span>
-        <span className={`${styles.hamburger} ${isMenuOpen ? styles.hamburgerOpen : ''}`}></span>
-        <span className={`${styles.hamburger} ${isMenuOpen ? styles.hamburgerOpen : ''}`}></span>
-      </button>
+      <HamburgerButton isOpen={isMenuOpen} onClick={toggleMenu} />
 
       {/* Mobile Navigation */}
-      <nav className={`${styles.mobileNav} ${isMenuOpen ? styles.mobileNavOpen : ''}`}>
-        <a href="/" onClick={closeMenu}>Home</a>
-        <a href="/paises" onClick={closeMenu}>Explorar Países</a>
-        <a href="/favoritos" onClick={closeMenu}>Meus Favoritos</a>
-        <a href="/sobre" onClick={closeMenu}>Sobre</a>
-        <a href="/contato" onClick={closeMenu}>Contato</a>
-      </nav>
+      <MobileNavigation isOpen={isMenuOpen} onLinkClick={closeMenu} />
 
       {/* Overlay for mobile menu */}
-      {isMenuOpen && (
-        <div 
-          className={styles.overlay} 
-          onClick={closeMenu}
-        ></div>
-      )}
+      <MenuOverlay isVisible={isMenuOpen} onClick={closeMenu} />
     </header>
   );
 }
