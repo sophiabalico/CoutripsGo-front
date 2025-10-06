@@ -1,6 +1,8 @@
 # 🌍 CoutripsGo - Frontend
 
-Uma aplicação web moderna para descoberta de destinos de viagem, construída com Next.js e React. Explore países incríveis atravé## 🚀 Scripts Disponíveis
+> **Descubra o mundo através de uma experiência única de viagem**
+
+**CoutripsGo** é uma aplicação web moderna e intuitiva desenvolvida para apaixonados por viagens que desejam explorar destinos incríveis ao redor do mundo.
 
 ## 🚀 Funcionalidades
 
