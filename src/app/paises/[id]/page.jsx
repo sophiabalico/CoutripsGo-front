@@ -4,6 +4,12 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from 'axios';
 import styles from "./pais-detalhes.module.css";
+import CountryHero from "../../components/CountryHero/CountryHero";
+import CountryFlag from "../../components/CountryFlag/CountryFlag";
+import CountryInfoSection from "../../components/CountryInfoSection/CountryInfoSection";
+import TouristAttractions from "../../components/TouristAttractions/TouristAttractions";
+import CountryCuriosities from "../../components/CountryCuriosities/CountryCuriosities";
+import { LoadingCountry, ErrorCountry, CountryNotFound } from "../../components/CountryStates/CountryStates";
 
 // Mapeamentos de bandeiras - extraídos para constantes
 const WIKIPEDIA_FLAG_MAPPING = {
@@ -377,180 +383,51 @@ export default function PaisDetalhesPage() {
   console.log("🎯 Renderizando detalhes - Loading:", loading, "Country:", !!country, "Error:", error);
 
   if (loading) {
-    return (
-      <div className={styles.pageContainer}>
-        <div className={styles.loadingContainer}>
-          <div className={styles.spinner}></div>
-          <p>Carregando informações do país...</p>
-        </div>
-      </div>
-    );
+    return <LoadingCountry />;
   }
 
   if (error) {
-    return (
-      <div className={styles.pageContainer}>
-        <div className={styles.errorContainer}>
-          <h2>Ops! Algo deu errado</h2>
-          <p>{error}</p>
-          <p style={{color: '#999', fontSize: '0.9rem'}}>ID do país: {params.id}</p>
-        </div>
-      </div>
-    );
+    return <ErrorCountry message={error} />;
   }
 
   if (!country) {
-    return (
-      <div className={styles.pageContainer}>
-        <div className={styles.errorContainer}>
-          <h2>País não encontrado</h2>
-          <p>O país solicitado não foi encontrado em nossa base de dados.</p>
-        </div>
-      </div>
-    );
+    return <CountryNotFound />;
   }
 
   return (
     <div className={styles.pageContainer}>
+      <CountryHero 
+        country={country}
+        isFavorite={isFavorite}
+        onToggleFavorite={toggleFavorite}
+        getCountryImage={getCountryImage}
+        handleImageError={handleImageError}
+      />
 
-      {/* Seção de Entrada - Destaque da Imagem do País */}
-      <div className={styles.entrySection}>
-        <div className={styles.entryImageContainer}>
-          <img 
-            src={getCountryImage(country)} 
-            alt={`Imagem principal de ${country.name}`}
-            className={styles.entryImage}
-            onError={handleImageError}
-            onLoad={() => console.log(`✅ Imagem de entrada carregada: ${getCountryImage(country)}`)}
-          />
-          <div className={styles.entryOverlay}>
-            <div className={styles.entryContent}>
-              <div className={styles.titleSection}>
-                <h1 className={styles.entryTitle}>{country.name}</h1>
-                <button 
-                  className={`${styles.favoriteButton} ${isFavorite ? styles.favoriteActive : ''}`}
-                  onClick={toggleFavorite}
-                  title={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-                >
-                  <span className={styles.heartIcon}>
-                    {isFavorite ? "❤️" : "🤍"}
-                  </span>
-                </button>
-              </div>
-              <p className={styles.entryLocation}>
-                {country.location || 'Localização não informada'}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Conteúdo principal */}
       <div className={styles.mainContent}>
-        
-        {/* Seção especial da bandeira */}
-        <div className={styles.flagSection}>
-          <div className={styles.flagDisplay}>
-            <img 
-              src={getCountryFlag(country)} 
-              alt={`Bandeira de ${country.name}`}
-              className={styles.countryFlag}
-              onError={(e) => handleFlagError(e, country)}
-              onLoad={() => console.log(`✅ Bandeira carregada: ${getCountryFlag(country)}`)}
-            />
-            <div className={styles.flagInfo}>
-              <h3>Bandeira Nacional</h3>
-              <p>Símbolo oficial de {country.name}</p>
-            </div>
-          </div>
-        </div>
+        <CountryFlag 
+          country={country}
+          getCountryFlag={getCountryFlag}
+          handleFlagError={handleFlagError}
+        />
 
-        {/* Informações básicas */}
-        <div className={styles.infoSection}>
-          <h2>Informações Gerais</h2>
-          <div className={styles.infoGrid}>
-            <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>🏛️</div>
-              <h3>Capital</h3>
-              <p>{renderSafeContent(country.capital, 'Não informado')}</p>
-            </div>
+        <CountryInfoSection 
+          country={country}
+          renderSafeContent={renderSafeContent}
+          formatCost={formatCost}
+        />
 
-            <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>🗨</div>
-              <h3>Idioma</h3>
-              <p>{renderSafeContent(country.language, 'Não informado')}</p>
-            </div>
+        <TouristAttractions 
+          tourists={country.tourists}
+          renderSafeContent={renderSafeContent}
+        />
 
-            <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>💰</div>
-              <h3>Moeda</h3>
-              <p>{renderSafeContent(country.coin, 'Não informado')}</p>
-            </div>
-
-            <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>✈️</div>
-              <h3>Custo de Viagem</h3>
-              <p>{formatCost(country.cost)}</p>
-            </div>
-
-            <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>🌍</div>
-              <h3>Localização</h3>
-              <p>{renderSafeContent(country.location, 'Não informado')}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Pontos Turísticos */}
-        {country.tourists && Array.isArray(country.tourists) && country.tourists.length > 0 && (
-          <div className={styles.attractionsSection}>
-            <h2>Pontos Turísticos</h2>
-            <div className={styles.attractionsList}>
-              {country.tourists.map((tourist, index) => (
-                <div key={tourist.id || index} className={styles.attractionItem}>
-                  {tourist.imageUrl && (
-                    <div className={styles.attractionImage}>
-                      <img 
-                        src={tourist.imageUrl} 
-                        alt={tourist.title}
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className={styles.attractionContent}>
-                    <h4>{renderSafeContent(tourist.title, `Ponto Turístico ${index + 1}`)}</h4>
-                    {tourist.description && (
-                      <p>{renderSafeContent(tourist.description)}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Curiosidades */}
-        {country.curiosities && Array.isArray(country.curiosities) && country.curiosities.length > 0 && (
-          <div className={styles.curiositiesSection}>
-            <h2>Curiosidades</h2>
-            <div className={styles.curiositiesList}>
-              {country.curiosities.map((curiosity, index) => (
-                <div key={curiosity.id || index} className={styles.curiosityItem}>
-                  <span className={styles.curiosityIcon}>💡</span>
-                  <div className={styles.curiosityContent}>
-                    <h4>{renderSafeContent(curiosity.title, `Curiosidade ${index + 1}`)}</h4>
-                    {curiosity.description && (
-                      <p>{renderSafeContent(curiosity.description)}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <CountryCuriosities 
+          curiosities={country.curiosities}
+          renderSafeContent={renderSafeContent}
+        />
       </div>
     </div>
   );
+
 }
