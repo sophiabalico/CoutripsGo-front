@@ -1,36 +1,165 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🌍 CoutripsGo - Frontend
 
-## Getting Started
+Uma aplicação web moderna para descoberta de destinos de viagem, construída com Next.js e React. Explore países incríveis atravé## 🚀 Scripts Disponíveis
 
-First, run the development server:
+## 🚀 Funcionalidades
 
+- ✨ **Interface Moderna**: Design limpo e responsivo
+- 🌐 **Exploração de Países**: Navegue por diversos destinos
+- 🔍 **Busca Inteligente**: Encontre países com busca por nome e continente
+- 📱 **Responsivo**: Funciona perfeitamente em desktop e mobile
+- 🎠 **Carrossel Interativo**: Navegação fluida entre destinos populares
+- ❤️ **Sistema de Favoritos**: Salve e gerencie países favoritos
+- 📍 **Detalhes Completos**: Informações detalhadas sobre cada destino
+
+## 🛠️ Tecnologias
+
+- **Next.js 15** - Framework React
+- **React 19** - Biblioteca de UI
+- **CSS Modules** - Estilização com escopo
+- **Swiper.js** - Carrossel interativo
+- **Axios** - Cliente HTTP
+
+## 📋 Pré-requisitos
+
+Antes de começar, certifique-se de ter instalado em sua máquina:
+
+### Para o Frontend (CoutripsGo-front)
+- **Node.js** (versão 18.0 ou superior) - [Download](https://nodejs.org/)
+- **npm** (vem com Node.js)
+- **Git** - [Download](https://git-scm.com/)
+
+### Para o Backend (CoutripsGo)
+- **Node.js** (versão 18.0 ou superior)
+- **npm** (incluído com Node.js)
+- **Banco de dados** (MySQL, PostgreSQL, etc. - verificar no repositório do backend)
+- **Git** para controle de versão
+
+### Verificar Instalações
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Verificar versão do Node.js
+node --version
+
+# Verificar versão do npm
+npm --version
+
+# Verificar versão do Git
+git --version
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Instalação e Configuração
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 1. Clone os Repositórios
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+#### Frontend (Este Repositório)
+```bash
+# Clone o frontend
+git clone https://github.com/sophiabalico/CoutripsGo-front.git
 
-## Learn More
+# Entre no diretório do frontend
+cd CoutripsGo-front
+```
 
-To learn more about Next.js, take a look at the following resources:
+#### Backend (Necessário para funcionalidade completa)
+```bash
+# Clone o backend em um diretório separado
+git clone https://github.com/sophiabalico/CoutripsGo.git
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Entre no diretório do backend
+cd CoutripsGo
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 2. Configuração do Backend
 
-## Deploy on Vercel
+```bash
+# No diretório do backend
+cd CoutripsGo
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Instale as dependências do backend
+npm install
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Configure as variáveis de ambiente do backend
+cp .env.example .env
+# Edite o arquivo .env com suas configurações
+
+# Inicie o servidor do backend (porta 5000)
+npm run dev
+```
+
+O backend estará rodando em: **http://localhost:5000**
+
+### 3. Configuração do Frontend
+
+```bash
+# Volte para o diretório do frontend
+cd ../CoutripsGo-front
+
+# Instale as dependências do frontend
+npm install
+```
+
+### 4. Inicie o Servidor de Desenvolvimento do Frontend
+
+```bash
+# No diretório do frontend
+npm run dev
+```
+
+O frontend estará rodando em: **http://localhost:3000**
+
+### 📋 Resumo dos Serviços
+
+| Serviço | URL | Porta | Status |
+|---------|-----|-------|--------|
+| **Backend** | http://localhost:5000 | 5000 | ⚠️ Iniciar PRIMEIRO |
+| **Frontend** | http://localhost:3000 | 3000 | ✅ Iniciar após backend |
+
+### ⚠️ Importante
+
+- **Execute PRIMEIRO o backend** antes do frontend
+- **Mantenha ambos os serviços rodando** para funcionalidade completa
+- O frontend faz requisições para o backend na porta 5000
+
+## 📁 Estrutura do Projeto
+
+```
+CoutripsGo-front/
+├── src/app/
+│   ├── components/               # Componentes reutilizáveis
+│   │   ├── CarrosselPaises/      # Carrossel interativo de países
+│   │   ├── DestinosPopulares/    # Seção de destinos populares
+│   │   ├── Header/               # Navegação principal
+│   │   ├── HeroSection/          # Seção hero da página inicial
+│   │   ├── SearchFilters/        # Filtros de busca
+│   │   ├── ContactForm/          # Formulário de contato
+│   │   ├── FavoriteCard/         # Card de país favorito
+│   │   └── hooks/                # Custom hooks reutilizáveis
+│   ├── paises/                   # Páginas de países
+│   │   ├── page.jsx              # Lista de países
+│   │   └── [id]/page.jsx         # Detalhes dinâmicos do país
+│   ├── contato/page.jsx          # Página de contato
+│   ├── favoritos/page.jsx        # Página de favoritos
+│   ├── sobre/page.jsx            # Página sobre a desenvolvedora
+│   └── page.jsx                  # Página inicial
+├── public/image/                 # Imagens dos países
+├── package.json                  # Dependências e scripts
+└── next.config.mjs               # Configuração Next.js
+```
+## 🌐 Páginas e Funcionalidades
+
+| Rota | Descrição | Recursos |
+|------|-----------|----------|
+| `/` | **Página Inicial** | Hero section e destinos populares |
+| `/paises` | **Lista de Países** | Busca por nome, filtro por continente, ordenação |
+| `/paises/[id]` | **Detalhes do País** | Informações completas, atrações turísticas, curiosidades |
+| `/contato` | **Contato** | Formulário para feedback e sugestões |
+| `/sobre` | **Sobre** | Informações sobre a desenvolvedora e redes sociais |
+| `/favoritos` | **Favoritos** | Gerenciamento de países salvos como favoritos |
+
+## �👥 Autora
+
+- **Sophia Balico** - [@sophiabalico](https://github.com/sophiabalico)
+
+---
+
+**⭐ Se este projeto te ajudou, considere dar uma estrela no repositório!**
