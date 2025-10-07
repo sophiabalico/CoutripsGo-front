@@ -84,6 +84,9 @@ npm install
 cp .env.example .env
 # Edite o arquivo .env com suas configurações
 
+# Rode o comando
+npx prisma migrate dev
+
 # Inicie o servidor do backend (porta 5000)
 npm run dev
 ```
