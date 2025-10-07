@@ -84,7 +84,7 @@ npm install
 cp .env.example .env
 # Edite o arquivo .env com suas configurações
 
-# Rode o comando
+# Executar migrações do Prisma
 npx prisma migrate dev
 
 # Inicie o servidor do backend (porta 5000)
